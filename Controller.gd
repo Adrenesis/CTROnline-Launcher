@@ -24,6 +24,8 @@ var forceXDeltaButton = null
 var forceXDeltaCheckBox = null
 var forceUpdateButton = null
 var forceUpdateCheckBox = null
+var keepRunningButton = null
+var keepRunningCheckBox = null
 
 var biosLineEdit = null
 var duckStationLineEdit = null
@@ -87,6 +89,8 @@ func _ready():
 	forceXDeltaCheckBox = forceXDeltaButton.get_node("CheckBox")
 	forceUpdateButton = get_node("%ForceUpdate")
 	forceUpdateCheckBox = forceUpdateButton.get_node("CheckBox")
+	keepRunningButton = get_node("%KeepRunning")
+	keepRunningCheckBox = keepRunningButton.get_node("CheckBox")
 	
 	forceBiosButton.connect("toggled", self, "force_bios_pressed")
 	forceDuckStationButton.connect("toggled", self, "force_duckstation_pressed")
@@ -318,6 +322,8 @@ func run_button_pressed():
 	args.insert(0, "-Command")
 	OS.execute("cmd.exe", ["/c", ("echo " + usernameLineEdit.text + "> ./username.ini") ], false, output, true, true)
 	OS.execute("powershell", args, false, output, true, true)
+	if not keepRunningButton.pressed:
+		get_tree().quit()
 
 func get_run_string():
 	#TODO support Linux

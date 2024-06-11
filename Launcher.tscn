@@ -13,11 +13,11 @@ anchor_bottom = 1.0
 script = ExtResource( 2 )
 
 [node name="VersionLabel" type="Label" parent="."]
-margin_left = 993.0
+margin_left = 973.0
 margin_top = 15.0
-margin_right = 1020.0
-margin_bottom = 14.0
-text = "v0.1"
+margin_right = 1024.0
+margin_bottom = 29.0
+text = "v0.1.0.1"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -62,7 +62,6 @@ tab_align = 0
 
 [node name="Run" type="Tabs" parent="VBoxContainer/TabContainer"]
 unique_name_in_owner = true
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -453,14 +452,73 @@ margin_right = 1016.0
 margin_bottom = 20.0
 rect_min_size = Vector2( 15, 0 )
 
-[node name="Control6" type="Control" parent="VBoxContainer/TabContainer/Run/VBoxContainer2"]
+[node name="HBoxContainer7" type="HBoxContainer" parent="VBoxContainer/TabContainer/Run/VBoxContainer2"]
 margin_top = 192.0
+margin_right = 1016.0
+margin_bottom = 242.0
+rect_min_size = Vector2( 0, 50 )
+
+[node name="Control4" type="Control" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer7"]
+margin_right = 15.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 15, 0 )
+
+[node name="Control3" type="Control" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer7"]
+margin_left = 19.0
+margin_right = 34.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 15, 0 )
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="VBoxContainer/TabContainer/Run/VBoxContainer2"]
+margin_top = 246.0
+margin_right = 1016.0
+margin_bottom = 296.0
+
+[node name="Control4" type="Control" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer8"]
+margin_right = 15.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 15, 0 )
+
+[node name="KeepRunning" type="Button" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer8"]
+unique_name_in_owner = true
+self_modulate = Color( 0.784314, 0.917647, 1, 1 )
+margin_left = 19.0
+margin_right = 997.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 0, 50 )
+focus_mode = 0
+size_flags_horizontal = 3
+toggle_mode = true
+enabled_focus_mode = 0
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer8/KeepRunning"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Keep the launcher alive
+ /!\\ This will make godot capture input while playing CTROnline (and so relaunch the console etc...) /!\\
+/!\\ It is there only for debugging purposes as the default behaviour of the launcher should be to close itsef /!\\"
+align = 1
+valign = 1
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer8/KeepRunning"]
+anchor_right = 1.0
+
+[node name="Control3" type="Control" parent="VBoxContainer/TabContainer/Run/VBoxContainer2/HBoxContainer8"]
+margin_left = 1001.0
+margin_right = 1016.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 15, 0 )
+
+[node name="Control6" type="Control" parent="VBoxContainer/TabContainer/Run/VBoxContainer2"]
+margin_top = 300.0
 margin_right = 1016.0
 margin_bottom = 413.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Directories" type="Tabs" parent="VBoxContainer/TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -822,7 +880,7 @@ text = "Version: 0.1"
 [node name="TextEdit" type="TextEdit" parent="VBoxContainer/TabContainer/About/VBoxContainer"]
 margin_top = 54.0
 margin_right = 1016.0
-margin_bottom = 300.0
+margin_bottom = 413.0
 size_flags_vertical = 3
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_readonly = Color( 1, 1, 1, 1 )
