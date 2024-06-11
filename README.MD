@@ -56,6 +56,7 @@ which launches the updater with a custom folder for xdelta, duckstation, a custo
 - Matt & Niko from the dev team of CTROnline
 - Mods nicely answering my questions
 - Carisa_Rhythm_Demon and ReMate15T (ARG) who had the idea of scripting this
+- Sanik [🇦🇷] for beta testing and ideas
 
 ## License
 
