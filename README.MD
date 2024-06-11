@@ -37,6 +37,14 @@ It download the last client, and compare it to a potential existing client, if t
 Then it cleans up everything, launch the game (sometimes launch the old ctr especially when running the first time), then wait 10 sec, then launches the client and auto enter you nickname
 ```
 
+## Screenshots
+
+![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/tree/main/screenshots/CTROnline-v0_1_0.PNG?raw=true)
+
+![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/tree/main/screenshots/CTROnline-v0_1_1.PNG?raw=true)
+
+![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/tree/main/screenshots/CTROnline-v0_1_2.PNG?raw=true)
+
 ## CLI Example:
 
 `.\autoupdater.bat /x .\xdelta0\ /d .\duckstation0\ /b .\SCPH1001.bin /s .\duckstationSettings\ /o CTROnline30.bin /sx /sd /ss /sb /fu /fs /fx /fd /fb --fps-30`
