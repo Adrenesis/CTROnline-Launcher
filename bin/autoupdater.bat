@@ -1,5 +1,4 @@
 @::!/dos/rocks
-pause
 @echo off
 goto :init
 
@@ -343,5 +342,4 @@ goto :init
     powershell -Command "cmd /c '.\CLIENT.EXE < .\username.ini'"
 :eof
     goto cleanenv
-    pause
     exit

@@ -315,9 +315,9 @@ func run_button_pressed():
 	print(get_run_string())
 	var output = []
 	var args = get_run_string().split(" ")
-	args.insert(0, "/c")
+	args.insert(0, "-Command")
 	OS.execute("cmd.exe", ["/c", ("echo " + usernameLineEdit.text + "> ./username.ini") ], false, output, true, true)
-	OS.execute("cmd.exe", args, false, output, true, true)
+	OS.execute("powershell", args, false, output, true, true)
 
 func get_run_string():
 	#TODO support Linux
@@ -335,12 +335,12 @@ func get_win_run_string():
 	string += " -fs" if forceGameSettingsButton.pressed else ""
 	string += " -fx" if forceXDeltaButton.pressed else ""
 	string += " -fu" if forceUpdateButton.pressed else ""
-	string += " -i " + inputLineEdit.text.replace("/", "\\").replace(" ", "^ ")
-	string += " -o " + outputLineEdit.text.replace("/", "\\").replace(" ", "^ ")
-	string += " -b " + biosLineEdit.text.replace("/", "\\").replace(" ", "^ ")
-	string += " -d " + duckStationLineEdit.text.replace("/", "\\").replace(" ", "^ ")
-	string += " -s " + gameSettingsLineEdit.text.replace("/", "\\").replace(" ", "^ ")
-	string += " -x " + xDeltaLineEdit.text.replace("/", "\\").replace(" ", "^ ")
+	string += " -i '" + inputLineEdit.text.replace("/", "\\") + "'"
+	string += " -o '" + outputLineEdit.text.replace("/", "\\") + "'"
+	string += " -b '" + biosLineEdit.text.replace("/", "\\") + "'"
+	string += " -d '" + duckStationLineEdit.text.replace("/", "\\") + "'"
+	string += " -s '" + gameSettingsLineEdit.text.replace("/", "\\") + "'"
+	string += " -x '" + xDeltaLineEdit.text.replace("/", "\\") + "'"
 	
 	return string
 
