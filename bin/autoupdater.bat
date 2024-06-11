@@ -90,9 +90,9 @@ goto :init
     if /i "%~1"=="-e"                                set "OptVerbose=yes"  & shift & goto :parse
     if /i "%~1"=="--verbose"                         set "OptVerbose=yes"  & shift & goto :parse
 
-    if /i "%~1"=="/f"                                set "FPS60=true"  & shift & goto :parse
-    if /i "%~1"=="-f"                                set "FPS60=true"  & shift & goto :parse
-    if /i "%~1"=="--fps-30"                          set "FPS60=true"  & shift & goto :parse
+    if /i "%~1"=="/f"                                set "FPS60=false"  & shift & goto :parse
+    if /i "%~1"=="-f"                                set "FPS60=false"  & shift & goto :parse
+    if /i "%~1"=="--fps-30"                          set "FPS60=false"  & shift & goto :parse
 
     if /i "%~1"=="/sx"                               set "SkipXDelta=true"  & shift & goto :parse
     if /i "%~1"=="-sx"                               set "SkipXDelta=true"  & shift & goto :parse
