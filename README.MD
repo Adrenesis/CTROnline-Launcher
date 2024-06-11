@@ -39,11 +39,11 @@ Then it cleans up everything, launch the game (sometimes launch the old ctr espe
 
 ## Screenshots
 
-![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/tree/main/screenshots/CTROnline-v0_1_0.PNG?raw=true)
+![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/blob/main/screenshots/CTROnline-v0_1_0.PNG?raw=true)
 
-![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/tree/main/screenshots/CTROnline-v0_1_1.PNG?raw=true)
+![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/blob/main/screenshots/CTROnline-v0_1_1.PNG?raw=true)
 
-![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/tree/main/screenshots/CTROnline-v0_1_2.PNG?raw=true)
+![screenshot of the gui](https://github.com/Adrenesis/CTROnline-Launcher/blob/main/screenshots/CTROnline-v0_1_2.PNG?raw=true)
 
 ## CLI Example:
 
