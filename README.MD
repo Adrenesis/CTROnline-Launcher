@@ -51,12 +51,20 @@ Then it cleans up everything, launch the game (sometimes launch the old ctr espe
 
 which launches the updater with a custom folder for xdelta, duckstation, a custom bios fed to duckstation, a custom duckstation settings directory, a custom rom name for the patched iso while skipping bios, gamesettings, xdelta and duckstation update and generating the 30 fps version, then launches the game and and the client. All of that while forcing also all those update + forcing the iso update. Force always take over skip.
 
+## Requirements
+
+- A CPU faster than a potato. But it needs to be x86_64.
+- For the hardware renderers, a GPU capable of OpenGL 3.1/OpenGL ES 3.1/Direct3D 11 Feature Level 10.0 (or Vulkan 1.0) and above. So, basically anything made in the last 10 years or so.
+
 ## Thanks
 
 - Matt & Niko from the dev team of CTROnline
 - Mods nicely answering my questions
 - Carisa_Rhythm_Demon and ReMate15T (ARG) who had the idea of scripting this
 - Sanik [🇦🇷], penta3 for beta testing and ideas
+- [DuckStation](https://github.com/stenzek/duckstation) team (don't bother them please)
+- [XDelta](https://github.com/jmacd/xdelta-gpl) team (don't bother them please)
+- [Godot](https://github.com/godotengine/godot) team
 
 ## License
 
