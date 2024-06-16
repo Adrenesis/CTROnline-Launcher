@@ -1,8 +1,13 @@
 extends Control
 
+const RunWithGodot = preload("res://RunWithGodot.gd")
+
+var console = null
+
 var runButton = null
 var saveButton = null
 var saveAndRunButton = null
+
 var usernameLineEdit = null
 var fps30Button = null
 var fps30CheckBox = null
@@ -24,6 +29,7 @@ var forceXDeltaButton = null
 var forceXDeltaCheckBox = null
 var forceUpdateButton = null
 var forceUpdateCheckBox = null
+
 var keepRunningButton = null
 var keepRunningCheckBox = null
 
@@ -48,12 +54,18 @@ var xDeltaRollback = null
 var inputRollback = null
 var outputRollback = null
 
-var biosDefault = null
-var duckStationDefault = null
-var gameSettingsDefault = null
-var xDeltaDefault = null
-var inputDefault = null
-var outputDefault = null
+var xDeltaURLLineEdit = null
+var duckStationURLLineEdit = null
+var gameSettingsURLLineEdit = null
+var clientURLLineEdit = null
+var patchURLLineEdit = null
+
+var xDeltaURLRollback = null
+var duckStationURLRollback = null
+var gameSettingsURLRollback = null
+var clientURLRollback = null
+var patchURLRollback = null
+	
 
 var fileDialog = null
 
@@ -64,10 +76,20 @@ var browsingXDelta = false
 var browsingInput = false
 var browsingOutput = false
 
+
+var xDeltaHTTPRequest = null
+var duckStationHTTPRequest = null
+var gameSettingsHTTPRequest = null
+var clientHTTPRequest = null
+var patchHTTPRequest = null
+
 func _ready():
+	console = get_node("%Console")
+	
 	runButton = get_node("%RunButton")
 	saveButton = get_node("%SaveButton")
 	saveAndRunButton = get_node("%SaveAndRunButton")
+	
 	usernameLineEdit = get_node("%UsernameLineEdit")
 	fps30Button = get_node("%FPS30")
 	fps30CheckBox = fps30Button.get_node("CheckBox")
@@ -89,8 +111,15 @@ func _ready():
 	forceXDeltaCheckBox = forceXDeltaButton.get_node("CheckBox")
 	forceUpdateButton = get_node("%ForceUpdate")
 	forceUpdateCheckBox = forceUpdateButton.get_node("CheckBox")
+	
 	keepRunningButton = get_node("%KeepRunning")
 	keepRunningCheckBox = keepRunningButton.get_node("CheckBox")
+	
+	xDeltaHTTPRequest = get_node("%HTTPRequestXDelta")
+	duckStationHTTPRequest = get_node("%HTTPRequestDuckStation")
+	gameSettingsHTTPRequest = get_node("%HTTPRequestGameSettings")
+	clientHTTPRequest = get_node("%HTTPRequestClient")
+	patchHTTPRequest = get_node("%HTTPRequestPatch")
 	
 	forceBiosButton.connect("toggled", self, "force_bios_pressed")
 	forceDuckStationButton.connect("toggled", self, "force_duckstation_pressed")
@@ -121,6 +150,18 @@ func _ready():
 	inputRollback = get_node("%InputRollback")
 	outputRollback = get_node("%OutputRollback")
 	
+	xDeltaURLRollback = get_node("%XDeltaURLRollback")
+	duckStationURLRollback = get_node("%DuckStationURLRollback")
+	gameSettingsURLRollback = get_node("%GameSettingsURLRollback")
+	clientURLRollback = get_node("%ClientURLRollback")
+	patchURLRollback = get_node("%PatchURLRollback")
+	
+	xDeltaURLLineEdit = get_node("%XDeltaURLLineEdit")
+	duckStationURLLineEdit = get_node("%DuckStationURLLineEdit")
+	gameSettingsURLLineEdit = get_node("%GameSettingsURLLineEdit")
+	clientURLLineEdit = get_node("%ClientURLLineEdit")
+	patchURLLineEdit = get_node("%PatchURLLineEdit")
+		
 	biosBrowse.connect("pressed", self, "browse_bios")
 	duckStationBrowse.connect("pressed", self, "browse_duckstation")
 	gameSettingsBrowse.connect("pressed", self, "browse_gamesettings")
@@ -134,13 +175,6 @@ func _ready():
 	xDeltaRollback.connect("pressed", self, "rollback_xdelta")
 	inputRollback.connect("pressed", self, "rollback_input")
 	outputRollback.connect("pressed", self, "rollback_output")
-	
-	biosDefault = biosLineEdit.text
-	duckStationDefault = duckStationLineEdit.text
-	gameSettingsDefault = gameSettingsLineEdit.text
-	xDeltaDefault = xDeltaLineEdit.text
-	inputDefault = inputLineEdit.text
-	outputDefault = outputLineEdit.text
 	
 	fileDialog = get_node("%FileDialog")
 	fileDialog.access = FileDialog.ACCESS_FILESYSTEM
@@ -195,9 +229,6 @@ func browse_bios():
 	browsingBios = true
 	fileDialog.popup()
 
-func rollback_bios():
-	biosLineEdit.text = biosDefault
-
 
 func browse_duckstation():
 	fileDialog.mode = FileDialog.MODE_OPEN_DIR
@@ -212,9 +243,6 @@ func browse_duckstation():
 	browsingDuckStation = true
 	fileDialog.popup()
 
-func rollback_duckstation():
-	duckStationLineEdit.text = duckStationDefault
-
 
 func browse_gamesettings():
 	fileDialog.mode = FileDialog.MODE_OPEN_DIR
@@ -228,9 +256,6 @@ func browse_gamesettings():
 	browsingGameSettings = true
 	fileDialog.popup()
 
-func rollback_gamesettings():
-	gameSettingsLineEdit.text = gameSettingsDefault
-
 
 func browse_xdelta():
 	fileDialog.mode = FileDialog.MODE_OPEN_DIR
@@ -243,9 +268,6 @@ func browse_xdelta():
 	fileDialog.current_dir = path
 	browsingXDelta = true
 	fileDialog.popup()
-
-func rollback_xdelta():
-	xDeltaLineEdit.text = xDeltaDefault
 
 
 func browse_input():
@@ -262,9 +284,6 @@ func browse_input():
 	browsingInput = true
 	fileDialog.popup()
 
-func rollback_input():
-	inputLineEdit.text = inputDefault
-
 
 func browse_output():
 	fileDialog.mode = FileDialog.MODE_OPEN_FILE
@@ -279,9 +298,6 @@ func browse_output():
 	fileDialog.current_dir = path
 	browsingOutput = true
 	fileDialog.popup()
-
-func rollback_output():
-	outputLineEdit.text = outputDefault
 
 
 func force_bios_pressed(pressed):
@@ -320,8 +336,12 @@ func run_button_pressed():
 	var output = []
 	var args = get_run_string().split(" ")
 	args.insert(0, "-Command")
-	OS.execute("cmd.exe", ["/c", ("echo " + usernameLineEdit.text + "> ./username.ini") ], false, output, true, true)
-	OS.execute("powershell", args, false, output, true, true)
+	var rwg := RunWithGodot.new()
+	add_child(rwg)
+	yield(rwg.custom_init(self), "completed")
+	rwg.queue_free()
+#	OS.execute("cmd.exe", ["/c", ("echo " + usernameLineEdit.text + "> ./username.ini") ], false, output, true, true)
+#	OS.execute("powershell", args, false, output, true, true)
 	if not keepRunningButton.pressed:
 		get_tree().quit()
 
@@ -371,10 +391,16 @@ func save_config():
 	
 	config.set_value("path", "bios_path", String(biosLineEdit.text))
 	config.set_value("path", "duckstation_path", String(duckStationLineEdit.text))
-	config.set_value("path", "gameettings_path", String(gameSettingsLineEdit.text))
+	config.set_value("path", "gamesettings_path", String(gameSettingsLineEdit.text))
 	config.set_value("path", "xdelta_path", String(xDeltaLineEdit.text))
 	config.set_value("path", "input_path", String(inputLineEdit.text))
 	config.set_value("path", "output_path", String(outputLineEdit.text))
+	
+	config.set_value("url", "xdelta_url", String(xDeltaURLLineEdit.text))
+	config.set_value("url", "duckstation_url", String(duckStationURLLineEdit.text))
+	config.set_value("url", "gamesettings_url", String(gameSettingsURLLineEdit.text))
+	config.set_value("url", "client_url", String(clientURLLineEdit.text))
+	config.set_value("url", "patch_url", String(patchURLLineEdit.text))
 	
 	config.set_value("settings", "username", String(usernameLineEdit.text))
 	
@@ -392,10 +418,10 @@ func get_config_bool(value : String):
 
 func load_config():
 	if not OS.has_feature("standalone") :
+		print(biosLineEdit.text)
 		print("can't load config in editor based execution")
 		return
 	var config = ConfigFile.new()
-
 	# Charger depuis le fichier.
 	var err = config.load(OS.get_executable_path().rsplit("/", true, 1)[0] + "/" + "config.cfg")
 	
@@ -414,11 +440,52 @@ func load_config():
 		
 		biosLineEdit.text = config.get_value("path", "bios_path", String(biosLineEdit.text))
 		duckStationLineEdit.text = config.get_value("path", "duckstation_path", String(duckStationLineEdit.text))
-		gameSettingsLineEdit.text = config.get_value("path", "gameettings_path", String(gameSettingsLineEdit.text))
+		gameSettingsLineEdit.text = config.get_value("path", "gamesettings_path", String(gameSettingsLineEdit.text))
 		xDeltaLineEdit.text = config.get_value("path", "xdelta_path", String(xDeltaLineEdit.text))
 		inputLineEdit.text = config.get_value("path", "input_path", String(inputLineEdit.text))
 		outputLineEdit.text = config.get_value("path", "output_path", String(outputLineEdit.text))
 		
+		print(xDeltaURLLineEdit.text)
+		xDeltaURLLineEdit.text = config.get_value("url", "xdelta_url", String(xDeltaURLLineEdit.text))
+		duckStationURLLineEdit.text = config.get_value("url", "duckstation_url", String(duckStationURLLineEdit.text))
+		gameSettingsURLLineEdit.text = config.get_value("url", "gamesettings_url", String(gameSettingsURLLineEdit.text))
+		clientURLLineEdit.text = config.get_value("url", "client_url", String(clientURLLineEdit.text))
+		patchURLLineEdit.text = config.get_value("url", "patch_url", String(patchURLLineEdit.text))
+		
+		
 		usernameLineEdit.text = config.get_value("settings", "username", String(usernameLineEdit.text))
 	else:
 		print("no config to load")
+		if OS.get_name() == "Windows":
+			biosLineEdit.text = biosRollback.windowsDefault
+			duckStationLineEdit.text = duckStationRollback.windowsDefault
+			gameSettingsLineEdit.text = gameSettingsRollback.windowsDefault
+			xDeltaLineEdit.text = xDeltaRollback.windowsDefault
+			inputLineEdit.text = inputRollback.windowsDefault
+			outputLineEdit.text = outputRollback.windowsDefault
+			
+			xDeltaURLLineEdit.text = xDeltaURLRollback.windowsDefault
+			duckStationURLLineEdit.text = duckStationURLRollback.windowsDefault
+			gameSettingsURLLineEdit.text = gameSettingsURLRollback.windowsDefault
+			clientURLLineEdit.text = clientURLRollback.windowsDefault
+			patchURLLineEdit.text = patchURLRollback.windowsDefault
+			
+			
+			usernameLineEdit.text = config.get_value("settings", "username", String(usernameLineEdit.text))
+		elif OS.get_name() == "X11":
+			biosLineEdit.text = biosRollback.linuxDefault
+			duckStationLineEdit.text = duckStationRollback.linuxDefault
+			gameSettingsLineEdit.text = gameSettingsRollback.linuxDefault
+			xDeltaLineEdit.text = xDeltaRollback.linuxDefault
+			inputLineEdit.text = inputRollback.linuxDefault
+			outputLineEdit.text = outputRollback.linuxDefault
+			
+			xDeltaURLLineEdit.text = xDeltaURLRollback.linuxDefault
+			duckStationURLLineEdit.text = duckStationURLRollback.linuxDefault
+			gameSettingsURLLineEdit.text = gameSettingsURLRollback.linuxDefault
+			clientURLLineEdit.text = clientURLRollback.linuxDefault
+			patchURLLineEdit.text = patchURLRollback.linuxDefault
+			
+		else:
+			OS.alert("Sorry this OS is not implemented yet =(")
+
