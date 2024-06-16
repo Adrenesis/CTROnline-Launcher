@@ -118,7 +118,8 @@ func hash_file(path) -> String:
 
 func file_exists(path : String) -> bool:
 	var file := File.new()
-	return file.file_exists(get_absolute_path(path))
+	var result = file.file_exists(get_absolute_path(path))
+	return result
 
 func write_file(content : String, path : String):
 	var file := File.new()
@@ -146,9 +147,14 @@ func copy_file(source : String, destination : String) -> bool:
 
 
 
-func are_files_different(path0, path1) -> bool:
+func are_files_different(p_path0, p_path1) -> bool:
 	var file = File.new()
+	var path0 = get_absolute_path(p_path0)
+	var path1 = get_absolute_path(p_path1)
+#	print([path0])
 #	print(file.get_sha256(path0))
+#	print(file.get_sha256("F:/Godot Project 3.5/CTROnline-Launcher/bin/Client.exe"))
+#	print([path1])
 #	print(file.get_sha256(path1))
 #	print(file.get_sha256(path0).casecmp_to(file.get_sha256(path1)) != 0 )
 	return (file.get_sha256(path0).casecmp_to(file.get_sha256(path1)) != 0)
@@ -335,33 +341,36 @@ func download_last_client():
 		yield(self, "download_done")
 		proxy_print("Downloading done.")
 
+var has_update_to_be_done = false
 
-func has_update_to_be_done(force := false):
+func check_update_to_be_done(force := false):
+
+	
 	os_extract_archive("./new_client.zip", "./temp/")
 	if force:
-		return true
+		yield(get_tree(), "idle_frame")
+		has_update_to_be_done = true
 	if file_exists("./Client.exe"):
 		proxy_print("echo client found, comparing...")
 #		print("found")
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
 		if are_files_different("./Client.exe", "./temp/Client.exe"):
-#			print("different")
-			return true
+			proxy_print("Files are different...")
+			has_update_to_be_done = true
 		proxy_print("echo check done")
 	else:
 		proxy_print("CLIENT.EXE not found updating...")
-		return true
-	if not file_exists(runNode.outputLineEdit.text):
+		yield(get_tree(), "idle_frame")
+		has_update_to_be_done = true
+	if not file_exists(get_absolute_path(runNode.outputLineEdit.text)):
 		proxy_print("bin not detected. Generating again.")
-		return true
-	var cuePath = runNode.outputLineEdit.text
-	if not file_exists(cuePath.rsplit(".")[0] + "cue"): 
-		proxy_print("cue not detected. Generating again")
-		write_file(
-			"FILE " + runNode.outputLineEdit.text + " BINARY\n" + 
-			"  TRACK 01 MODE2/2352\n" +
-			"    INDEX 01 00:00:00",
-			cuePath.rsplit(".")[0] + "cue")
-	return false
+		yield(get_tree(), "idle_frame")
+		has_update_to_be_done = true
+
+	yield(get_tree(), "idle_frame")
 
 
 
@@ -383,19 +392,34 @@ func update_ctronline():
 		xdelta_cmd += " -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
 		
 	else:
-		download(runNode.patchURLLineEdit.text 
+		download(runNode.patchURLLineEdit.text
 			, "ctr-u_Online30.xdelta"
 			, runNode.patchHTTPRequest)
 		yield(self, "download_done")
 		proxy_print("Downloading done.")
 		proxy_print("Updating CTR Online...")
 		xdelta_cmd = get_os_xdelta_command()
-		xdelta_cmd += " -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
+		xdelta_cmd += " -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online30.xdelta' '" + runNode.outputLineEdit.text + "'"
 #		xdelta_cmd = "%XDeltaFolder%/xdelta3-3.0.9-x64.exe -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
 	OS.execute("powershell", ["-Command", xdelta_cmd])
 #	os_shell_execute(xdelta_cmd)
 	proxy_print("Update done.")
 
+func generate_cue():
+	var cuePath = runNode.outputLineEdit.text
+#	print("." + cuePath.rsplit(".", 1)[1] + ".cue")
+	if not file_exists("." + cuePath.rsplit(".", 1)[1] + ".cue"): 
+		proxy_print("cue not detected. Generating again")
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
+		write_file(
+			"FILE " + runNode.outputLineEdit.text + " BINARY\n" + 
+			"  TRACK 01 MODE2/2352\n" +
+			"    INDEX 01 00:00:00",
+			"." + cuePath.rsplit(".", 1)[1] + ".cue")
+	yield(get_tree(), "idle_frame")
 
 func cleanup():
 	proxy_print("Cleanup...")
@@ -435,7 +459,9 @@ func main():
 	if not runNode.skipBiosButton.pressed:
 		yield(try_install_bios(runNode.forceBiosButton.pressed), "completed")
 	yield(download_last_client(), "completed")
-	if has_update_to_be_done(runNode.forceUpdateButton.pressed):
+	yield(check_update_to_be_done(runNode.forceUpdateButton.pressed), "completed")
+	yield(generate_cue(), "completed")
+	if has_update_to_be_done:
 		yield(update_ctronline(), "completed")
 	else:
 		proxy_print("Game already updated.")

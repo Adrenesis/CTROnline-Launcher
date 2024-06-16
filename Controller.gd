@@ -165,6 +165,8 @@ func _ready():
 		
 	usernameLineEdit.connect("text_changed", self, "username_changed")
 	
+	fps30CheckBox.connect("pressed", self, "fps_30_pressed")
+	
 	biosBrowse.connect("pressed", self, "browse_bios")
 	duckStationBrowse.connect("pressed", self, "browse_duckstation")
 	gameSettingsBrowse.connect("pressed", self, "browse_gamesettings")
@@ -200,6 +202,14 @@ func username_changed(username : String):
 	else:
 		saveAndRunButton.set_disabled(false)
 		runButton.set_disabled(false)
+
+func fps_30_pressed():
+	if fps30CheckBox.pressed:
+		outputLineEdit.text = outputLineEdit.text.replace("60", "30")
+		patchURLLineEdit.text = patchURLLineEdit.text.replace("60", "30")
+	else:
+		outputLineEdit.text = outputLineEdit.text.replace("30", "60")
+		patchURLLineEdit.text = patchURLLineEdit.text.replace("30", "60")
 
 func file_dialog_canceled():
 	browsingBios = false

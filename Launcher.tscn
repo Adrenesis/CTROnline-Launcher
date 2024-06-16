@@ -222,6 +222,7 @@ tab_align = 0
 
 [node name="RUN" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
 unique_name_in_owner = true
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 35.0
@@ -644,7 +645,7 @@ size_flags_vertical = 3
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 34.0
+margin_top = 35.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES"]
 anchor_right = 1.0
@@ -652,25 +653,25 @@ anchor_bottom = 1.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
 margin_right = 986.0
-margin_bottom = 26.0
+margin_bottom = 27.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
-margin_top = 4.0
-margin_right = 262.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 263.0
+margin_bottom = 22.0
 text = "Input bin (iso of the game to be patched)::"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
-margin_left = 266.0
-margin_right = 414.0
-margin_bottom = 26.0
+margin_left = 267.0
+margin_right = 410.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="InputLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
-margin_left = 418.0
-margin_right = 918.0
-margin_bottom = 26.3333
+margin_left = 414.0
+margin_right = 914.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "./CTR - Crash Team Racing (USA).bin"
 caret_blink = true
@@ -678,9 +679,9 @@ caret_blink = true
 [node name="InputBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 922.0
-margin_right = 952.667
-margin_bottom = 26.0
+margin_left = 918.0
+margin_right = 950.0
+margin_bottom = 27.0
 text = "    "
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer/InputBrowse"]
@@ -693,9 +694,9 @@ valign = 1
 [node name="InputRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "./CTR - Crash Team Racing (USA).bin"
@@ -707,27 +708,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 30.0
+margin_top = 31.0
 margin_right = 986.0
-margin_bottom = 56.0
+margin_bottom = 58.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
-margin_top = 4.0
-margin_right = 237.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 238.0
+margin_bottom = 22.0
 text = "Output bin (iso of the patched game) :"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
-margin_left = 241.0
-margin_right = 414.0
-margin_bottom = 26.0
+margin_left = 242.0
+margin_right = 410.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="OutputLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
 unique_name_in_owner = true
-margin_left = 418.0
-margin_right = 918.0
-margin_bottom = 26.3333
+margin_left = 414.0
+margin_right = 914.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "./ctr-u_Online60.bin"
 caret_blink = true
@@ -735,9 +736,9 @@ caret_blink = true
 [node name="OutputBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 922.0
-margin_right = 952.667
-margin_bottom = 26.0
+margin_left = 918.0
+margin_right = 950.0
+margin_bottom = 27.0
 text = "    "
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5/OutputBrowse"]
@@ -750,9 +751,9 @@ valign = 1
 [node name="OutputRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "./ctr-u_Online60.bin"
@@ -764,27 +765,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 60.0
+margin_top = 62.0
 margin_right = 986.0
-margin_bottom = 86.0
+margin_bottom = 89.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
-margin_top = 4.0
-margin_right = 187.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 189.0
+margin_bottom = 22.0
 text = "Bios File (fed to DuckStation) :"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
-margin_left = 191.0
-margin_right = 414.0
-margin_bottom = 26.0
+margin_left = 193.0
+margin_right = 410.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="BiosLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
 unique_name_in_owner = true
-margin_left = 418.0
-margin_right = 918.0
-margin_bottom = 26.3333
+margin_left = 414.0
+margin_right = 914.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "./bios.bin"
 caret_blink = true
@@ -792,9 +793,9 @@ caret_blink = true
 [node name="BiosBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 922.0
-margin_right = 952.667
-margin_bottom = 26.0
+margin_left = 918.0
+margin_right = 950.0
+margin_bottom = 27.0
 text = "    "
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6/BiosBrowse"]
@@ -807,9 +808,9 @@ valign = 1
 [node name="BiosRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "./bios.bin"
@@ -821,27 +822,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 90.0
+margin_top = 93.0
 margin_right = 986.0
-margin_bottom = 116.0
+margin_bottom = 120.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
-margin_top = 4.0
-margin_right = 139.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 140.0
+margin_bottom = 22.0
 text = "DuckStation Directory:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
-margin_left = 143.0
-margin_right = 414.0
-margin_bottom = 26.0
+margin_left = 144.0
+margin_right = 410.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="DuckStationLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
-margin_left = 418.0
-margin_right = 918.0
-margin_bottom = 26.3333
+margin_left = 414.0
+margin_right = 914.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "./duckstation/"
 caret_blink = true
@@ -849,9 +850,9 @@ caret_blink = true
 [node name="DuckStationBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 922.0
-margin_right = 952.667
-margin_bottom = 26.0
+margin_left = 918.0
+margin_right = 950.0
+margin_bottom = 27.0
 text = "    "
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2/DuckStationBrowse"]
@@ -864,9 +865,9 @@ valign = 1
 [node name="DuckStationRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "./duckstation/"
@@ -878,27 +879,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 120.0
+margin_top = 124.0
 margin_right = 986.0
-margin_bottom = 146.0
+margin_bottom = 151.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
-margin_top = 4.0
-margin_right = 191.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 192.0
+margin_bottom = 22.0
 text = "DuckStation Settings Directory:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
-margin_left = 195.0
-margin_right = 414.0
-margin_bottom = 26.0
+margin_left = 196.0
+margin_right = 410.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="GameSettingsLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
-margin_left = 418.0
-margin_right = 918.0
-margin_bottom = 26.3333
+margin_left = 414.0
+margin_right = 914.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "%USERPROFILE%/documents\\DuckStation/"
 caret_blink = true
@@ -906,9 +907,9 @@ caret_blink = true
 [node name="GameSettingsBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 922.0
-margin_right = 952.667
-margin_bottom = 26.0
+margin_left = 918.0
+margin_right = 950.0
+margin_bottom = 27.0
 text = "    "
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3/GameSettingsBrowse"]
@@ -921,9 +922,9 @@ valign = 1
 [node name="GameSettingsRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "%USERPROFILE%/documents/DuckStation/"
@@ -934,27 +935,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 150.0
+margin_top = 155.0
 margin_right = 986.0
-margin_bottom = 176.0
+margin_bottom = 182.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
-margin_top = 4.0
+margin_top = 5.0
 margin_right = 112.0
-margin_bottom = 20.3333
+margin_bottom = 22.0
 text = "XDelta Directory:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
 margin_left = 116.0
-margin_right = 414.0
-margin_bottom = 26.0
+margin_right = 410.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="XDeltaLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
 unique_name_in_owner = true
-margin_left = 418.0
-margin_right = 918.0
-margin_bottom = 26.3333
+margin_left = 414.0
+margin_right = 914.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "./xdelta/"
 caret_blink = true
@@ -962,9 +963,9 @@ caret_blink = true
 [node name="XDeltaBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 922.0
-margin_right = 952.667
-margin_bottom = 26.0
+margin_left = 918.0
+margin_right = 950.0
+margin_bottom = 27.0
 text = "    "
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4/XDeltaBrowse"]
@@ -977,9 +978,9 @@ valign = 1
 [node name="XDeltaRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "./xdelta/"
@@ -994,7 +995,7 @@ texture = ExtResource( 3 )
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 34.0
+margin_top = 35.0
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL"]
 anchor_right = 1.0
@@ -1002,25 +1003,25 @@ anchor_bottom = 1.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
 margin_right = 986.0
-margin_bottom = 26.0
+margin_bottom = 27.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
-margin_top = 4.0
-margin_right = 93.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 94.0
+margin_bottom = 22.0
 text = "URL of xdelta:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
-margin_left = 97.0
-margin_right = 448.0
-margin_bottom = 26.0
+margin_left = 98.0
+margin_right = 446.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="XDeltaURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
 unique_name_in_owner = true
-margin_left = 452.0
-margin_right = 952.0
-margin_bottom = 26.3333
+margin_left = 450.0
+margin_right = 950.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "https://github.com/jmacd/xdelta-gpl/releases/download/v3.0.9/xdelta3-3.0.9-x64.exe.zip"
 caret_blink = true
@@ -1028,9 +1029,9 @@ caret_blink = true
 [node name="XDeltaURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://github.com/jmacd/xdelta-gpl/releases/download/v3.0.9/xdelta3-3.0.9-x64.exe.zip"
@@ -1041,27 +1042,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 30.0
+margin_top = 31.0
 margin_right = 986.0
-margin_bottom = 56.0
+margin_bottom = 58.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
-margin_top = 4.0
-margin_right = 122.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 123.0
+margin_bottom = 22.0
 text = "URL of duckstation:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
-margin_left = 126.0
-margin_right = 448.0
-margin_bottom = 26.0
+margin_left = 127.0
+margin_right = 446.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="DuckStationURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
 unique_name_in_owner = true
-margin_left = 452.0
-margin_right = 952.0
-margin_bottom = 26.3333
+margin_left = 450.0
+margin_right = 950.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "https://github.com/stenzek/duckstation/releases/download/latest/duckstation-windows-x64-release.zip"
 caret_blink = true
@@ -1069,9 +1070,9 @@ caret_blink = true
 [node name="DuckStationURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://github.com/stenzek/duckstation/releases/download/latest/duckstation-windows-x64-release.zip"
@@ -1082,27 +1083,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 60.0
+margin_top = 62.0
 margin_right = 986.0
-margin_bottom = 86.0
+margin_bottom = 89.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
-margin_top = 4.0
+margin_top = 5.0
 margin_right = 160.0
-margin_bottom = 20.3333
+margin_bottom = 22.0
 text = "URL of the GameSettings:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
 margin_left = 164.0
-margin_right = 448.0
-margin_bottom = 26.0
+margin_right = 446.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="GameSettingsURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
 unique_name_in_owner = true
-margin_left = 452.0
-margin_right = 952.0
-margin_bottom = 26.3333
+margin_left = 450.0
+margin_right = 950.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/SCUS-94426.ini"
 caret_blink = true
@@ -1110,9 +1111,9 @@ caret_blink = true
 [node name="GameSettingsURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/SCUS-94426.ini"
@@ -1124,27 +1125,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 90.0
+margin_top = 93.0
 margin_right = 986.0
-margin_bottom = 116.0
+margin_bottom = 120.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
-margin_top = 4.0
-margin_right = 111.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 113.0
+margin_bottom = 22.0
 text = "URL of the client:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
-margin_left = 115.0
-margin_right = 448.0
-margin_bottom = 26.0
+margin_left = 117.0
+margin_right = 446.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="ClientURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
 unique_name_in_owner = true
-margin_left = 452.0
-margin_right = 952.0
-margin_bottom = 26.3333
+margin_left = 450.0
+margin_right = 950.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/client.zip"
 caret_blink = true
@@ -1152,9 +1153,9 @@ caret_blink = true
 [node name="ClientURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/client.zip"
@@ -1165,27 +1166,27 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 120.0
+margin_top = 124.0
 margin_right = 986.0
-margin_bottom = 146.0
+margin_bottom = 151.0
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
-margin_top = 4.0
-margin_right = 112.0
-margin_bottom = 20.3333
+margin_top = 5.0
+margin_right = 113.0
+margin_bottom = 22.0
 text = "URL of the patch:"
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
-margin_left = 116.0
-margin_right = 448.0
-margin_bottom = 26.0
+margin_left = 117.0
+margin_right = 446.0
+margin_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="PatchURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
 unique_name_in_owner = true
-margin_left = 452.0
-margin_right = 952.0
-margin_bottom = 26.3333
+margin_left = 450.0
+margin_right = 950.0
+margin_bottom = 27.0
 rect_min_size = Vector2( 500, 0 )
 text = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/ctr-u_Online60.xdelta"
 caret_blink = true
@@ -1193,9 +1194,9 @@ caret_blink = true
 [node name="PatchURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 956.0
-margin_right = 986.667
-margin_bottom = 26.0
+margin_left = 954.0
+margin_right = 986.0
+margin_bottom = 27.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/ctr-u_Online60.xdelta"
@@ -1207,14 +1208,12 @@ scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
 [node name="SETTINGS" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
-visible = false
-margin_right = 40.0
-margin_bottom = 27.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 35.0
 
 [node name="HBoxContainer8" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/SETTINGS"]
-margin_top = 318.0
-margin_right = 1024.0
-margin_bottom = 388.0
+anchor_right = 1.0
 
 [node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/SETTINGS/HBoxContainer8"]
 margin_right = 15.0
@@ -1225,7 +1224,7 @@ rect_min_size = Vector2( 15, 0 )
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
 margin_left = 19.0
-margin_right = 1005.0
+margin_right = 967.0
 margin_bottom = 70.0
 rect_min_size = Vector2( 0, 70 )
 focus_mode = 0
@@ -1248,8 +1247,8 @@ anchor_right = 1.0
 margin_bottom = 71.0
 
 [node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/SETTINGS/HBoxContainer8"]
-margin_left = 1009.0
-margin_right = 1024.0
+margin_left = 971.0
+margin_right = 986.0
 margin_bottom = 70.0
 rect_min_size = Vector2( 15, 0 )
 
@@ -1375,7 +1374,7 @@ rect_min_size = Vector2( 0, 12 )
 margin_top = 465.0
 margin_right = 1024.0
 margin_bottom = 576.0
-size_flags_vertical = 3
+rect_min_size = Vector2( 0, 111 )
 size_flags_stretch_ratio = 0.25
 
 [node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer4"]
