@@ -62,6 +62,7 @@ which launches the updater with a custom folder for xdelta, duckstation, a custo
 - Mods nicely answering my questions
 - Carisa_Rhythm_Demon and ReMate15T (ARG) who had the idea of scripting this
 - Sanik [🇦🇷], penta3 for beta testing and ideas
+- Leormas [ 🇦🇷 ] for graphics and UIs
 - [DuckStation](https://github.com/stenzek/duckstation) team (don't bother them please)
 - [XDelta](https://github.com/jmacd/xdelta-gpl) team (don't bother them please)
 - [Godot](https://github.com/godotengine/godot) team
