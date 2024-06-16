@@ -389,7 +389,7 @@ func update_ctronline():
 		proxy_print("Downloading done.")
 		proxy_print("Updating CTR Online...")
 		xdelta_cmd = get_os_xdelta_command()
-		xdelta_cmd += " -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
+		xdelta_cmd += "-f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
 		
 	else:
 		download(runNode.patchURLLineEdit.text
@@ -399,7 +399,7 @@ func update_ctronline():
 		proxy_print("Downloading done.")
 		proxy_print("Updating CTR Online...")
 		xdelta_cmd = get_os_xdelta_command()
-		xdelta_cmd += " -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online30.xdelta' '" + runNode.outputLineEdit.text + "'"
+		xdelta_cmd += "-f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online30.xdelta' '" + runNode.outputLineEdit.text + "'"
 #		xdelta_cmd = "%XDeltaFolder%/xdelta3-3.0.9-x64.exe -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
 	OS.execute("powershell", ["-Command", xdelta_cmd])
 #	os_shell_execute(xdelta_cmd)
