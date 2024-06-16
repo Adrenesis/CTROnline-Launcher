@@ -63,7 +63,7 @@ which launches the updater with a custom folder for xdelta, duckstation, a custo
 - Carisa_Rhythm_Demon and ReMate15T (ARG) who had the idea of scripting this
 - Sanik [🇦🇷], penta3 for beta testing and ideas
 - Leormas [ 🇦🇷 ] for graphics and UIs
-- Leno for sharing tricks to get this done [Link tower their launcher](https://github.com/xlenore/OnlineCTR_Launcher)
+- Leno for sharing tricks to get this done [Link toward their launcher](https://github.com/xlenore/OnlineCTR_Launcher)
 - [DuckStation](https://github.com/stenzek/duckstation) team (don't bother them please)
 - [XDelta](https://github.com/jmacd/xdelta-gpl) team (don't bother them please)
 - [Godot](https://github.com/godotengine/godot) team
