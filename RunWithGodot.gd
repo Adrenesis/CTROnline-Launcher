@@ -1,5 +1,7 @@
 extends Node
 
+signal delete_confirm_answered
+
 const Utils = preload("res://utils.gd")
 
 signal download_done
@@ -10,6 +12,10 @@ var waiting_download_print = false
 var download_was_text = false
 var download_path = ""
 var used_http
+
+var path_about_to_be_deleted
+
+var function_state : GDScriptFunctionState
 
 func proxy_print(string : String):
 	var time = ""
@@ -32,7 +38,7 @@ func _process(delta : float):
 	if polling_download:
 		if not waiting_download_print:
 			waiting_download_print = true
-			yield(get_tree().create_timer(0.2), "timeout")
+			function_state = yield(get_tree().create_timer(0.2), "timeout")
 			var bodySize = used_http.get_body_size()
 			var downloadedBytes = used_http.get_downloaded_bytes()
 			var percent = int(downloadedBytes*100/bodySize)
@@ -67,7 +73,7 @@ func download(link : String, p_path : String, http : HTTPRequest):
 
 func _http_request_completed(result, _response_code, _headers, _body):
 	polling_download = false
-	print(result)
+#	print(result)
 	if result != OK:
 		proxy_print("Download Failed")
 	else:
@@ -82,7 +88,7 @@ func get_absolute_path(path : String) -> String:
 	if path.begins_with("./"):
 		var result = path.replace("./", "/")
 		result = OS.get_executable_path().rsplit("/", false, 1)[0] + result
-		return result.replace('\\', '/')
+		return result.replace('\\', '/').replace("\n", "").replace("\r", "")
 	if (path.find("%") != -1) and (OS.get_name() == "Windows"):
 		var output := []
 		OS.execute("cmd", ["/c", "echo " + path], true, output)
@@ -116,10 +122,10 @@ func file_exists(path : String) -> bool:
 
 func write_file(content : String, path : String):
 	var file := File.new()
-	print([path])
+#	print([path])
 	var dir_path = get_absolute_path("%USERPROFILE%/Documents/DuckStation/gamesettings")
-	print([dir_path])
-	print(Directory.new().dir_exists(dir_path))
+#	print([dir_path])
+#	print(Directory.new().dir_exists(dir_path))
 	var err = file.open(path, File.WRITE) # Ouvert en écriture seulement
 	if err != OK:
 		print("ERROR: writing failed with error " + Utils.ERROR.keys()[err])
@@ -134,15 +140,17 @@ func delete_file(path : String) -> bool:
 
 func copy_file(source : String, destination : String) -> bool:
 	var directory := Directory.new()
+#	print([get_absolute_path(source)])
+#	print([get_absolute_path(destination)])
 	return (OK == directory.copy(get_absolute_path(source), get_absolute_path(destination)))
 
 
 
 func are_files_different(path0, path1) -> bool:
 	var file = File.new()
-	print(file.get_sha256(path0))
-	print(file.get_sha256(path1))
-	print(file.get_sha256(path0).casecmp_to(file.get_sha256(path1)) != 0 )
+#	print(file.get_sha256(path0))
+#	print(file.get_sha256(path1))
+#	print(file.get_sha256(path0).casecmp_to(file.get_sha256(path1)) != 0 )
 	return (file.get_sha256(path0).casecmp_to(file.get_sha256(path1)) != 0)
 
 func directory_exists(path : String) -> bool:
@@ -154,10 +162,34 @@ func make_directory(path : String) -> bool:
 	var directory = Directory.new()
 	return (OK == directory.make_dir(get_absolute_path(path)))
 
-func delete_directory(path : String) -> bool:
+func delete_directory(p_path : String):
 	var directory := Directory.new()
-	return (OK == directory.remove(get_absolute_path(path)))
+	var path = get_absolute_path(p_path)
+	var path_check = path.to_lower()
+	if (
+		(path.find("xdelta") != -1) or
+		(path.find("duckstation") != -1) or
+		(path.find("temp") != -1)
+	):
+		os_delete_directory(path)
+		yield(get_tree(), "idle_frame")
+	else:
+		path_about_to_be_deleted = path 
+		runNode.deleteConfirmationDialog.get_node("Label2").text = (
+			"/!\\ YOU ARE ABOUT TO DELETE THE DIRECTORY /!\\\n\"" +
+			path +
+			"\"\nDO YOU WISH TO CONTINUE?")
+		runNode.deleteConfirmationDialog.popup()
+		yield(self, "delete_confirm_answered")
 
+func delete_confirmed():
+	os_delete_directory(path_about_to_be_deleted)
+	print(path_about_to_be_deleted + " deleted")
+	emit_signal("delete_confirm_answered")
+
+func delete_canceled(action):
+#	print(action)
+	emit_signal("delete_confirm_answered")
 
 
 func os_extract_archive(input : String, output : String):
@@ -184,15 +216,31 @@ func os_start_duckstation():
 		"Start-Process '" + 
 		get_absolute_path(runNode.duckStationLineEdit.text) +
 		"duckstation-qt-x64-ReleaseLTCG.exe' -ArgumentList '" +
-		get_absolute_path( runNode.outputLineEdit.text).replace("/", "\\") + "'"])
+		get_absolute_path( runNode.outputLineEdit.text).replace("/", "\\") + "'"], false)
 #	os_shell_execute("'" + runNode.duckStationLineEdit.text + "duckstation-qt-x64-ReleaseLTCG.exe' '" + runNode.outputLineEdit.text + "'")
 
 func os_start_client():
-	write_file(runNode.usernameLineEdit.text, "./username.ini")
-#	cmd /c start powershell -NoExit -Command { echo Adrenesis|./Client.exe }
-	OS.execute("powershell", [ "-Command", "invoke-expression 'cmd /c start powershell -NoExit -Command { echo " + runNode.usernameLineEdit.text + "|./Client.exe } '"])
 	
-
+#	cmd /c start powershell -NoExit -Command { echo Adrenesis|./Client.exe }
+	var filtered_username 
+#	= runNode.usernameLineEdit.text.replace("&", "^^^^^^&")
+#	filtered_username = runNode.usernameLineEdit.text.replace("*", "^^^*")
+#	filtered_username = runNode.usernameLineEdit.text.replace("[", "^^^[")
+#	filtered_username = runNode.usernameLineEdit.text.replace("@", "^^^@")
+#	filtered_username = runNode.usernameLineEdit.text.replace("^", "^^^^")
+	filtered_username = runNode.usernameLineEdit.text.replace(" ", "")
+	write_file(filtered_username, "./username.ini")
+	OS.execute("powershell", [ "-Command", "invoke-expression 'cmd /c start cmd /c .\\Client.exe ^< .\\username.ini'"], false)
+	
+func os_delete_directory(path : String):
+	if OS.get_name() == "Windows":
+#		print("deleting " + path)
+		OS.execute("cmd", [ "/c", "rmdir /Q /S \"" + path.replace("/", "\\") + "\""])
+	elif OS.get_name() == "X11":
+		return "" #TODO linux
+	else:
+		OS.alert(OS.get_name() + " OS is not supported, sorry =(")
+		return ""
 		
 func try_install_xdelta(force := false):
 	if (force or (not directory_exists(runNode.xDeltaLineEdit.text))): 
@@ -202,7 +250,7 @@ func try_install_xdelta(force := false):
 
 func install_xdelta():
 	if directory_exists(runNode.xDeltaLineEdit.text):
-		delete_directory(runNode.xDeltaLineEdit.text)
+		yield(delete_directory(runNode.xDeltaLineEdit.text), "completed")
 	proxy_print("Downloading xdelta from github...")
 	download(runNode.xDeltaURLLineEdit.text 
 		, "./xdelta.zip"
@@ -228,7 +276,7 @@ func install_duckstation():
 	proxy_print("Download done.")
 	proxy_print("Creating duckstation files...")
 	if file_exists(runNode.duckStationLineEdit.text + "duckstation-qt-x64-ReleaseLTCG.exe"):
-		 delete_directory(runNode.duckStationLineEdit.text)
+		 yield(delete_directory(runNode.duckStationLineEdit.text), "completed")
 	os_extract_archive("./duckstation.zip", runNode.duckStationLineEdit.text) 
 	proxy_print("Done.")
 
@@ -256,15 +304,19 @@ func install_gamesettings():
 
 func try_install_bios(force := true):
 	if(force or (not file_exists(runNode.gameSettingsLineEdit.text + "bios/bios.bin"))): 
-		install_bios()
+		yield(install_bios(), "completed")
+	else:
+		yield(get_tree(), "idle_frame")
 
 func install_bios():
 	if not directory_exists(runNode.gameSettingsLineEdit.text + "bios"):
 		make_directory(runNode.gameSettingsLineEdit.text)
 	if not directory_exists(runNode.gameSettingsLineEdit.text + "bios"):
 		proxy_print("ERROR: could not create bios output directory")
+		yield(get_tree(), "idle_frame")
 	else:
 		proxy_print("Copying bios...")
+		yield(get_tree(), "idle_frame")
 		#echo F|xcopy %BiosFile% %DuckStationSettingsFolder%\bios\bios.bin>nul
 		copy_file(runNode.biosLineEdit.text, runNode.gameSettingsLineEdit.text + "bios/bios.bin")
 		proxy_print("Done")
@@ -272,7 +324,7 @@ func install_bios():
 func download_last_client():
 	proxy_print("echo Downloading last client...")
 	if directory_exists("./temp/"):
-		delete_directory("./temp/")
+		yield(delete_directory("./temp/"), "completed")
 	make_directory("./temp/")
 	if not directory_exists("./temp/"):
 		yield(get_tree(), "idle_frame")
@@ -290,9 +342,9 @@ func has_update_to_be_done(force := false):
 		return true
 	if file_exists("./Client.exe"):
 		proxy_print("echo client found, comparing...")
-		print("found")
+#		print("found")
 		if are_files_different("./Client.exe", "./temp/Client.exe"):
-			print("different")
+#			print("different")
 			return true
 		proxy_print("echo check done")
 	else:
@@ -316,6 +368,7 @@ func has_update_to_be_done(force := false):
 func update_ctronline():
 	proxy_print("Game needs an update")
 	delete_file("./Client.exe")
+	yield(get_tree(), "idle_frame")
 	copy_file("./temp/Client.exe", "./Client.exe")
 	proxy_print("Downloading last patch...")
 	var xdelta_cmd = ""
@@ -347,7 +400,7 @@ func update_ctronline():
 func cleanup():
 	proxy_print("Cleanup...")
 	if directory_exists("./temp/"):
-		delete_directory("./temp/")
+		yield(delete_directory("./temp/"), "completed")
 	if file_exists("./new_client.zip"):
 		delete_file("./new_client.zip")
 	if file_exists("./duckstation.zip"):
@@ -371,6 +424,8 @@ func custom_init(p_runNode: Node):
 	yield(main(), "completed")
 
 func main():
+	runNode.deleteConfirmationDialog.connect("confirmed", self, "delete_confirmed")
+	runNode.deleteConfirmationDialog.connect("custom_action", self, "delete_canceled")
 	if not runNode.skipXDeltaButton.pressed:
 		yield(try_install_xdelta(runNode.forceXDeltaButton.pressed), "completed")
 	if not runNode.skipDuckStationButton.pressed:
@@ -378,10 +433,17 @@ func main():
 	if not runNode.skipGameSettingsButton.pressed:
 		yield(try_install_gamesettings(runNode.forceGameSettingsButton.pressed), "completed")
 	if not runNode.skipBiosButton.pressed:
-		try_install_bios(runNode.forceBiosButton.pressed)
+		yield(try_install_bios(runNode.forceBiosButton.pressed), "completed")
 	yield(download_last_client(), "completed")
 	if has_update_to_be_done(runNode.forceUpdateButton.pressed):
 		yield(update_ctronline(), "completed")
 	else:
 		proxy_print("Game already updated.")
 	start_game()
+	runNode.deleteConfirmationDialog.disconnect("confirmed", self, "delete_confirmed")
+	runNode.deleteConfirmationDialog.disconnect("custom_action", self, "delete_canceled")
+
+func queue_free():
+	if function_state != null:
+		if function_state.is_valid(true):
+			function_state.resume()

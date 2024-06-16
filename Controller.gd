@@ -68,6 +68,7 @@ var patchURLRollback = null
 	
 
 var fileDialog = null
+var deleteConfirmationDialog = null
 
 var browsingBios = false
 var browsingDuckStation = false
@@ -162,6 +163,8 @@ func _ready():
 	clientURLLineEdit = get_node("%ClientURLLineEdit")
 	patchURLLineEdit = get_node("%PatchURLLineEdit")
 		
+	usernameLineEdit.connect("text_changed", self, "username_changed")
+	
 	biosBrowse.connect("pressed", self, "browse_bios")
 	duckStationBrowse.connect("pressed", self, "browse_duckstation")
 	gameSettingsBrowse.connect("pressed", self, "browse_gamesettings")
@@ -177,13 +180,26 @@ func _ready():
 	outputRollback.connect("pressed", self, "rollback_output")
 	
 	fileDialog = get_node("%FileDialog")
+	fileDialog.popup_exclusive = true
 	fileDialog.access = FileDialog.ACCESS_FILESYSTEM
 	fileDialog.connect("file_selected", self, "file_dialog_confirmed")
 	fileDialog.connect("dir_selected", self, "file_dialog_confirmed")
 	fileDialog.get_cancel().connect("pressed", self, "file_dialog_canceled")
 	fileDialog.get_close_button().connect("pressed", self, "file_dialog_canceled")
 	
+	deleteConfirmationDialog = get_node("%DeleteConfirmationDialog")
+	deleteConfirmationDialog.popup_exclusive = true
+	
 	load_config()
+
+func username_changed(username : String):
+#	print([username.length()])
+	if username.length() == 0:
+		saveAndRunButton.set_disabled(true)
+		runButton.set_disabled(true)
+	else:
+		saveAndRunButton.set_disabled(false)
+		runButton.set_disabled(false)
 
 func file_dialog_canceled():
 	browsingBios = false
@@ -194,7 +210,7 @@ func file_dialog_canceled():
 	browsingOutput = false
 
 func file_dialog_confirmed(path):
-	print(path)
+#	print(path)
 	if browsingBios:
 		biosLineEdit.text = path
 		browsingBios = false
@@ -211,7 +227,7 @@ func file_dialog_confirmed(path):
 		inputLineEdit.text = path
 		browsingInput = false
 	if browsingOutput:
-		inputLineEdit.text = path
+		outputLineEdit.text = path
 		browsingOutput = false
 
 
@@ -238,7 +254,7 @@ func browse_duckstation():
 			OS.get_executable_path().rsplit("/", true, 1)[0] + 
 			duckStationLineEdit.text.substr(1)
 		)
-		print(path)
+#		print(path)
 	fileDialog.current_dir = path
 	browsingDuckStation = true
 	fileDialog.popup()
@@ -301,26 +317,26 @@ func browse_output():
 
 
 func force_bios_pressed(pressed):
-	skipBiosButton.disabled = pressed
-	skipBiosCheckBox.disabled = pressed
+	skipBiosButton.set_disabled(pressed)
+	skipBiosCheckBox.set_disabled(pressed)
 	if pressed:
 		skipBiosCheckBox.pressed = false
 
 func force_duckstation_pressed(pressed):
-	skipDuckStationButton.disabled = pressed
-	skipDuckStationCheckBox.disabled = pressed
+	skipDuckStationButton.set_disabled(pressed)
+	skipDuckStationCheckBox.set_disabled(pressed)
 	if pressed:
 		skipDuckStationCheckBox.pressed = false
 
 func force_gamesettings_pressed(pressed):
-	skipGameSettingsButton.disabled = pressed
-	skipGameSettingsCheckBox.disabled = pressed
+	skipGameSettingsButton.set_disabled(pressed)
+	skipGameSettingsCheckBox.set_disabled(pressed)
 	if pressed:
 		skipGameSettingsCheckBox.pressed = false
 
 func force_xdelta_pressed(pressed):
-	skipXDeltaButton.disabled = pressed
-	skipXDeltaCheckBox.disabled = pressed
+	skipXDeltaButton.set_disabled(pressed)
+	skipXDeltaCheckBox.set_disabled(pressed)
 	if pressed:
 		skipXDeltaCheckBox.pressed = false
 
@@ -332,7 +348,9 @@ func save_button_pressed():
 	save_config()
 
 func run_button_pressed():
-	print(get_run_string())
+	saveAndRunButton.set_disabled(true)
+	runButton.set_disabled(true)
+#	print(get_run_string())
 	var output = []
 	var args = get_run_string().split(" ")
 	args.insert(0, "-Command")
@@ -342,6 +360,8 @@ func run_button_pressed():
 	rwg.queue_free()
 #	OS.execute("cmd.exe", ["/c", ("echo " + usernameLineEdit.text + "> ./username.ini") ], false, output, true, true)
 #	OS.execute("powershell", args, false, output, true, true)
+	saveAndRunButton.set_disabled(false)
+	runButton.set_disabled(false)
 	if not keepRunningButton.pressed:
 		get_tree().quit()
 
@@ -410,7 +430,7 @@ func save_config():
 	config.save(OS.get_executable_path().rsplit("/", true, 1)[0] + "/" + "config.cfg")
 
 func get_config_bool(value : String):
-	print(value)
+#	print(value)
 	if value == "True":
 		return true
 	else:
@@ -418,7 +438,7 @@ func get_config_bool(value : String):
 
 func load_config():
 	if not OS.has_feature("standalone") :
-		print(biosLineEdit.text)
+#		print(biosLineEdit.text)
 		print("can't load config in editor based execution")
 		return
 	var config = ConfigFile.new()
@@ -445,7 +465,7 @@ func load_config():
 		inputLineEdit.text = config.get_value("path", "input_path", String(inputLineEdit.text))
 		outputLineEdit.text = config.get_value("path", "output_path", String(outputLineEdit.text))
 		
-		print(xDeltaURLLineEdit.text)
+#		print(xDeltaURLLineEdit.text)
 		xDeltaURLLineEdit.text = config.get_value("url", "xdelta_url", String(xDeltaURLLineEdit.text))
 		duckStationURLLineEdit.text = config.get_value("url", "duckstation_url", String(duckStationURLLineEdit.text))
 		gameSettingsURLLineEdit.text = config.get_value("url", "gamesettings_url", String(gameSettingsURLLineEdit.text))
@@ -454,6 +474,7 @@ func load_config():
 		
 		
 		usernameLineEdit.text = config.get_value("settings", "username", String(usernameLineEdit.text))
+		username_changed(usernameLineEdit.text)
 	else:
 		print("no config to load")
 		if OS.get_name() == "Windows":
@@ -469,9 +490,6 @@ func load_config():
 			gameSettingsURLLineEdit.text = gameSettingsURLRollback.windowsDefault
 			clientURLLineEdit.text = clientURLRollback.windowsDefault
 			patchURLLineEdit.text = patchURLRollback.windowsDefault
-			
-			
-			usernameLineEdit.text = config.get_value("settings", "username", String(usernameLineEdit.text))
 		elif OS.get_name() == "X11":
 			biosLineEdit.text = biosRollback.linuxDefault
 			duckStationLineEdit.text = duckStationRollback.linuxDefault
