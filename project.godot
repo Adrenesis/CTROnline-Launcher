@@ -12,7 +12,8 @@ config_version=4
 
 config/name="Ctr Online- Launcher"
 run/main_scene="res://Launcher.tscn"
-config/icon="res://icon.png"
+boot_splash/image="res://OnlineCTR-Logo.png"
+config/icon="res://app_logo.PNG"
 
 [gui]
 

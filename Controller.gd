@@ -2,6 +2,16 @@ extends Control
 
 const RunWithGodot = preload("res://RunWithGodot.gd")
 
+
+var default_min_size_default_font 
+var default_min_size_run_font 
+var min_size_default_font 
+var min_size_run_font
+var run_button_parent
+
+var is_running = false
+var is_canceled = false
+
 var console = null
 
 var runButton = null
@@ -192,7 +202,38 @@ func _ready():
 	deleteConfirmationDialog = get_node("%DeleteConfirmationDialog")
 	deleteConfirmationDialog.popup_exclusive = true
 	
+	run_button_parent = runButton.get_parent()
+	
+	min_size_default_font = theme.default_font.size
+	min_size_run_font = run_button_parent.theme.default_font.size
+	
+	default_min_size_default_font = theme.default_font.size
+	default_min_size_run_font = run_button_parent.theme.default_font.size
+	
+	get_tree().root.connect("size_changed", self, "on_window_resize")
+	
 	load_config()
+
+func on_window_resize():
+	min_size_default_font = default_min_size_default_font
+	min_size_run_font = default_min_size_run_font
+	if OS.get_window_size().x < 550:
+		min_size_default_font = min(default_min_size_default_font * pow((OS.get_window_size().x / 550) * 1.0, 2.0), min_size_default_font)
+	if OS.get_window_size().y < 525:
+		min_size_default_font = min(default_min_size_default_font * pow((OS.get_window_size().y / 525) * 1.0, 4.0), min_size_default_font)
+	
+	if OS.get_window_size().x < 550:
+		min_size_run_font = min(default_min_size_run_font * pow((OS.get_window_size().x / 550) * 1.0, 1.5), min_size_run_font)
+	if OS.get_window_size().y < 525:
+		min_size_run_font = min(default_min_size_run_font * pow((OS.get_window_size().y / 525) * 1.0, 5.0), min_size_run_font)
+	theme.default_font.size = min_size_default_font
+	run_button_parent.theme.default_font.size = min_size_run_font
+	run_button_parent.theme.default_font.extra_spacing_bottom = -16.0 * (min_size_run_font/default_min_size_run_font)
+	saveAndRunButton.get_node("Label").margin_top = -10.0 * (min_size_run_font/default_min_size_run_font)
+	saveButton.get_node("Label").margin_top = -10.0 * (min_size_run_font/default_min_size_run_font)
+	runButton.get_node("Label").margin_top = -10.0 * (min_size_run_font/default_min_size_run_font)
+	theme.set("CheckBox/constants/check_vadjust", (9.0 * (min_size_run_font/default_min_size_run_font) - 9.0))
+
 
 func username_changed(username : String):
 #	print([username.length()])

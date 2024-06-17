@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=2]
+[gd_scene load_steps=35 format=2]
 
 [ext_resource path="res://CustomCheckBox.gd" type="Script" id=1]
 [ext_resource path="res://Controller.gd" type="Script" id=2]
@@ -10,6 +10,9 @@
 [ext_resource path="res://RollbackButton.gd" type="Script" id=8]
 [ext_resource path="res://DefaultButton.gd" type="Script" id=9]
 [ext_resource path="res://DeleteConfirmationDialog.gd" type="Script" id=10]
+[ext_resource path="res://OnlineCTR-Logo.png" type="Texture" id=11]
+[ext_resource path="res://ShadedLogo.gd" type="Script" id=12]
+[ext_resource path="res://temp_run_font.tres" type="DynamicFont" id=13]
 
 [sub_resource type="DynamicFont" id=16]
 size = 10
@@ -47,6 +50,7 @@ border_width_right = 1
 border_color = Color( 0.137255, 0.137255, 0.141176, 1 )
 
 [sub_resource type="DynamicFont" id=4]
+size = 18
 use_filter = true
 extra_spacing_top = -4
 extra_spacing_bottom = -3
@@ -56,6 +60,7 @@ font_data = ExtResource( 4 )
 
 [sub_resource type="Theme" id=3]
 default_font = SubResource( 4 )
+CheckBox/constants/check_vadjust = 0
 RichTextLabel/fonts/normal_font = SubResource( 16 )
 TabContainer/colors/font_color_bg = Color( 1, 1, 1, 1 )
 TabContainer/fonts/font = SubResource( 12 )
@@ -93,6 +98,69 @@ void fragment() {
 shader = SubResource( 13 )
 shader_param/tex_divider = 24.0
 
+[sub_resource type="Shader" id=20]
+code = "shader_type canvas_item;
+
+uniform bool left_scroll = false;
+
+void fragment() {
+	
+	
+	float reverse = (left_scroll ? - 1.0: 1.0); 
+	if ((UV.y > 0.1) && (UV.y < 0.9)) {
+		COLOR = texture(TEXTURE, vec2(mod( 1.0-reverse *mod((UV.x-sin(UV.y*600.0+TIME*600.0)/500.0)*sin(TIME/16.0+UV.x*0.5), 1.0)*3.0+TIME*1.0, 1.0), 
+		mod((UV.y*1.0+ sin(UV.x*600.0)/200.0)+sin(UV.x*10.0)/20.0, 1.0)/0.5-0.5)); 
+	}
+	else {
+		COLOR = vec4(0.0, 1.0, 3.0, 1.0);
+	}
+	float add_time;
+	if (left_scroll) {
+		add_time = TIME/5.0;
+	} else {
+		add_time = - TIME/5.0;
+	}
+	float check_width = 0.1;
+	float other_check_width = 0.0125;
+	vec2 uv = vec2(mod(UV.x+add_time, check_width), UV.y);
+	if ((mod(uv.x, 1.0) > (check_width/2.0))&& mod(UV.y, 0.6) < 0.3 ) {
+		if (mod(uv.x, other_check_width) > other_check_width/2.0) {
+			if (mod(UV.y, 0.3) < 0.15) {
+				COLOR = vec4(0.0, 1.0, 3.0, 1.0);
+			}
+		}
+		if (mod(uv.x, other_check_width) < other_check_width/2.0) {
+			if (mod(UV.y, 0.3) > 0.15) {
+				COLOR = vec4(0.0, 1.0, 3.0, 1.0);
+			}
+		}
+	}
+	else if ((mod(uv.x, 1.0) < (check_width/2.0))&& mod(UV.y, 0.6) > 0.3 ) {
+		if (mod(uv.x, other_check_width) > other_check_width/2.0) {
+			if (mod(UV.y, 0.3) < 0.15) {
+				COLOR = vec4(0.0, 1.0, 3.0, 1.0);
+			}
+		}
+		if (mod(uv.x, other_check_width) < other_check_width/2.0) {
+			if (mod(UV.y, 0.3) > 0.15) {
+				COLOR = vec4(0.0, 1.0, 3.0, 1.0);
+			}
+		}
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=22]
+shader = SubResource( 20 )
+shader_param/left_scroll = false
+
+[sub_resource type="ShaderMaterial" id=21]
+shader = SubResource( 20 )
+shader_param/left_scroll = true
+
+[sub_resource type="DynamicFont" id=23]
+size = 25
+font_data = ExtResource( 4 )
+
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.14902, 0.14902, 0.14902, 1 )
 
@@ -104,10 +172,8 @@ font_data = ExtResource( 7 )
 [sub_resource type="StyleBoxFlat" id=14]
 bg_color = Color( 0.129412, 0.133333, 0.164706, 1 )
 
-[sub_resource type="DynamicFont" id=17]
-size = 33
-use_filter = true
-font_data = ExtResource( 4 )
+[sub_resource type="Theme" id=24]
+default_font = ExtResource( 13 )
 
 [sub_resource type="DynamicFont" id=18]
 font_data = ExtResource( 7 )
@@ -129,15 +195,36 @@ scale = Vector2( 1.91972, 1.91972 )
 texture = ExtResource( 5 )
 
 [node name="TextureRect2" type="Sprite" parent="."]
-self_modulate = Color( 0, 0.34902, 0.356863, 0.666667 )
+self_modulate = Color( 0.458824, 0.607843, 0.611765, 0.796078 )
 material = SubResource( 10 )
 position = Vector2( 1237.78, 819 )
 scale = Vector2( 10, 10 )
 texture = ExtResource( 6 )
 
+[node name="TextureRect3" type="Sprite" parent="."]
+self_modulate = Color( 0.631373, 1, 0.72549, 0.207843 )
+material = SubResource( 22 )
+position = Vector2( 516, 312.2 )
+scale = Vector2( 0.5, 0.1 )
+texture = ExtResource( 11 )
+script = ExtResource( 12 )
+up = true
+
+[node name="TextureRect4" type="Sprite" parent="."]
+self_modulate = Color( 0.631373, 1, 0.72549, 0.207843 )
+material = SubResource( 21 )
+position = Vector2( 569, 334 )
+scale = Vector2( 0.5, 0.1 )
+texture = ExtResource( 11 )
+script = ExtResource( 12 )
+
 [node name="VersionLabel" type="Label" parent="."]
-anchor_left = 0.943
+anchor_left = 1.0
 anchor_right = 1.0
+margin_top = 12.0
+margin_right = 0.368042
+margin_bottom = 17.0
+grow_horizontal = 0
 text = "v0.2.0.0"
 
 [node name="FileDialog" type="FileDialog" parent="."]
@@ -163,58 +250,52 @@ anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer"]
-margin_right = 1024.0
-margin_bottom = 12.0
-rect_min_size = Vector2( 0, 12 )
-
 [node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer"]
-margin_top = 16.0
 margin_right = 1024.0
-margin_bottom = 33.0
+margin_bottom = 37.0
 
 [node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer2"]
-margin_right = 445.0
-margin_bottom = 17.0
+margin_right = 398.0
+margin_bottom = 37.0
 size_flags_horizontal = 3
 
 [node name="TitleLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer2"]
-margin_left = 449.0
-margin_right = 575.0
-margin_bottom = 17.0
+margin_left = 402.0
+margin_right = 622.0
+margin_bottom = 37.0
+custom_fonts/font = SubResource( 23 )
 text = "CTROnline Launcher"
 
 [node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer2"]
-margin_left = 579.0
+margin_left = 626.0
 margin_right = 1024.0
-margin_bottom = 17.0
+margin_bottom = 37.0
 size_flags_horizontal = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
-margin_top = 37.0
+margin_top = 41.0
 margin_right = 1024.0
-margin_bottom = 314.0
-rect_min_size = Vector2( 0, 277 )
+margin_bottom = 373.0
+rect_min_size = Vector2( 0, 100 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
 
 [node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer"]
 margin_right = 15.0
-margin_bottom = 277.0
+margin_bottom = 332.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer"]
 margin_left = 19.0
 margin_right = 1005.0
-margin_bottom = 277.0
+margin_bottom = 332.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/HBoxContainer/Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 0, 277 )
+rect_min_size = Vector2( 0, 100 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.0
@@ -226,420 +307,458 @@ visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 35.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
 
-[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_right = 986.0
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer"]
+margin_right = 44.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer"]
+margin_left = 48.0
+margin_right = 937.0
+margin_bottom = 297.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
+
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_right = 889.0
 margin_bottom = 12.0
 rect_min_size = Vector2( 0, 12 )
 
-[node name="HBoxContainer9" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
+[node name="HBoxContainer9" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
 margin_top = 16.0
-margin_right = 986.0
-margin_bottom = 43.0
+margin_right = 889.0
+margin_bottom = 46.0
 
-[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer9"]
-margin_right = 15.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="Label2" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer9"]
-margin_left = 19.0
+[node name="Label2" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer9"]
 margin_top = 5.0
-margin_right = 88.0
-margin_bottom = 22.0
+margin_right = 79.0
+margin_bottom = 25.0
 text = "Username: "
 
-[node name="UsernameLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer9"]
+[node name="UsernameLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer9"]
 unique_name_in_owner = true
-margin_left = 92.0
-margin_right = 967.0
-margin_bottom = 27.0
+margin_left = 83.0
+margin_right = 889.0
+margin_bottom = 30.0
 size_flags_horizontal = 3
 caret_blink = true
 
-[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer9"]
-margin_left = 971.0
-margin_right = 986.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 15, 0 )
+[node name="HBoxContainer10" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_top = 50.0
+margin_right = 889.0
+margin_bottom = 76.0
 
-[node name="HBoxContainer10" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 47.0
-margin_right = 986.0
-margin_bottom = 70.0
-
-[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer10"]
-margin_right = 15.0
-margin_bottom = 23.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="FPS30" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer10"]
+[node name="FPS30" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer10"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 19.0
-margin_right = 967.0
-margin_bottom = 23.0
+margin_right = 889.0
+margin_bottom = 26.0
 focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 enabled_focus_mode = 0
 script = ExtResource( 1 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer10/FPS30"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer10/FPS30"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "Patch with 30fps (default 60)"
 align = 1
 valign = 1
 
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer10/FPS30"]
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer10/FPS30"]
 anchor_right = 1.0
 
-[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer10"]
-margin_left = 971.0
-margin_right = 986.0
-margin_bottom = 23.0
+[node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_top = 80.0
+margin_right = 889.0
+margin_bottom = 80.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_top = 84.0
+margin_right = 889.0
+margin_bottom = 212.0
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer"]
+margin_right = 691.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 50, 50 )
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+margin_right = 691.0
+margin_bottom = 29.0
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_right = 691.0
+margin_bottom = 29.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+text = "BIOS COPY"
+valign = 1
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+margin_top = 33.0
+margin_right = 691.0
+margin_bottom = 62.0
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer6"]
+margin_right = 691.0
+margin_bottom = 29.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+text = "DUCKSTATION DOWNLOAD AND INSTALL"
+valign = 1
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+margin_top = 66.0
+margin_right = 691.0
+margin_bottom = 95.0
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer7"]
+margin_right = 691.0
+margin_bottom = 29.0
+size_flags_horizontal = 3
+size_flags_vertical = 7
+text = "GAMESETTINGS DOWNLOAD AND INSTALL"
+valign = 1
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer"]
+margin_top = 99.0
+margin_right = 691.0
+margin_bottom = 128.0
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer8"]
+margin_right = 251.0
+margin_bottom = 29.0
+size_flags_vertical = 7
+text = "XDELTA DOWNLOAD AND INSTALL"
+align = 1
+valign = 1
+
+[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer"]
+margin_left = 695.0
+margin_right = 710.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 15, 0 )
 
-[node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 74.0
-margin_right = 986.0
-margin_bottom = 74.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 78.0
-margin_right = 986.0
-margin_bottom = 194.0
+[node name="VBoxContainer3" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer"]
+margin_left = 714.0
+margin_right = 786.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 72, 0 )
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.63
+size_flags_stretch_ratio = 0.0
 
-[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer"]
-margin_right = 15.0
-margin_bottom = 116.0
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_right = 72.0
+margin_bottom = 26.0
+
+[node name="SkipBios" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer"]
+unique_name_in_owner = true
+self_modulate = Color( 0.784314, 0.917647, 1, 1 )
+margin_right = 72.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+toggle_mode = true
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer/SkipBios"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -10.0
+text = "SKIP"
+align = 2
+valign = 1
+
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer/SkipBios"]
+anchor_right = 1.0
+
+[node name="Control8" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_top = 30.0
+margin_right = 72.0
+margin_bottom = 30.0
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_top = 34.0
+margin_right = 72.0
+margin_bottom = 60.0
+
+[node name="SkipDuckStation" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer6"]
+unique_name_in_owner = true
+self_modulate = Color( 0.784314, 0.917647, 1, 1 )
+margin_right = 72.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+toggle_mode = true
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer6/SkipDuckStation"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -10.0
+text = "SKIP"
+align = 2
+valign = 1
+
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer6/SkipDuckStation"]
+anchor_right = 1.0
+
+[node name="Control7" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_top = 64.0
+margin_right = 72.0
+margin_bottom = 64.0
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_top = 68.0
+margin_right = 72.0
+margin_bottom = 94.0
+
+[node name="SkipGameSettings" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer7"]
+unique_name_in_owner = true
+self_modulate = Color( 0.784314, 0.917647, 1, 1 )
+margin_right = 72.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+toggle_mode = true
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer7/SkipGameSettings"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -10.0
+text = "SKIP"
+align = 2
+valign = 1
+
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer7/SkipGameSettings"]
+anchor_right = 1.0
+
+[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_top = 98.0
+margin_right = 72.0
+margin_bottom = 98.0
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3"]
+margin_top = 102.0
+margin_right = 72.0
+margin_bottom = 128.0
+
+[node name="SkipXDelta" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer8"]
+unique_name_in_owner = true
+self_modulate = Color( 0.784314, 0.917647, 1, 1 )
+margin_right = 72.0
+margin_bottom = 26.0
+size_flags_horizontal = 3
+toggle_mode = true
+script = ExtResource( 1 )
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer8/SkipXDelta"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -10.0
+text = "SKIP"
+align = 2
+valign = 1
+
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer3/HBoxContainer8/SkipXDelta"]
+anchor_right = 1.0
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer"]
+margin_left = 790.0
+margin_right = 805.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 15, 0 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer"]
-margin_left = 19.0
-margin_right = 481.0
-margin_bottom = 116.0
-size_flags_horizontal = 3
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer"]
+margin_left = 809.0
+margin_right = 889.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 80, 0 )
+size_flags_stretch_ratio = 0.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_right = 462.0
-margin_bottom = 23.0
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_right = 80.0
+margin_bottom = 26.0
+size_flags_stretch_ratio = 0.0
 
-[node name="SkipBios" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="ForceBios" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 462.0
-margin_bottom = 23.0
-size_flags_horizontal = 3
-toggle_mode = true
-script = ExtResource( 1 )
-
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer/SkipBios"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "Skip Bios copy"
-align = 1
-valign = 1
-
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer/SkipBios"]
-anchor_right = 1.0
-
-[node name="Control8" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_top = 27.0
-margin_right = 462.0
-margin_bottom = 27.0
-
-[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_top = 31.0
-margin_right = 462.0
-margin_bottom = 54.0
-
-[node name="SkipDuckStation" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer6"]
-unique_name_in_owner = true
-self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 462.0
-margin_bottom = 23.0
-size_flags_horizontal = 3
-toggle_mode = true
-script = ExtResource( 1 )
-
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer6/SkipDuckStation"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "Skip check for download and install of duckstation"
-align = 1
-valign = 1
-
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer6/SkipDuckStation"]
-anchor_right = 1.0
-
-[node name="Control7" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_top = 58.0
-margin_right = 462.0
-margin_bottom = 58.0
-
-[node name="HBoxContainer7" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_top = 62.0
-margin_right = 462.0
-margin_bottom = 85.0
-
-[node name="SkipGameSettings" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer7"]
-unique_name_in_owner = true
-self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 462.0
-margin_bottom = 23.0
-size_flags_horizontal = 3
-toggle_mode = true
-script = ExtResource( 1 )
-
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer7/SkipGameSettings"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "Skip check for download and install of gamesettings"
-align = 1
-valign = 1
-
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer7/SkipGameSettings"]
-anchor_right = 1.0
-
-[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_top = 89.0
-margin_right = 462.0
-margin_bottom = 89.0
-
-[node name="HBoxContainer8" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer"]
-margin_top = 93.0
-margin_right = 462.0
-margin_bottom = 116.0
-
-[node name="SkipXDelta" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer8"]
-unique_name_in_owner = true
-self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 462.0
-margin_bottom = 23.0
-size_flags_horizontal = 3
-toggle_mode = true
-script = ExtResource( 1 )
-
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer8/SkipXDelta"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "    Skip check for download and install of xdelta (might glitch patch step)"
-align = 1
-valign = 1
-
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer/HBoxContainer8/SkipXDelta"]
-anchor_right = 1.0
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer"]
-margin_left = 485.0
-margin_right = 500.0
-margin_bottom = 116.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer"]
-margin_left = 504.0
-margin_right = 967.0
-margin_bottom = 116.0
-size_flags_horizontal = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_right = 463.0
-margin_bottom = 23.0
-
-[node name="ForceBios" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer"]
-unique_name_in_owner = true
-self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 463.0
-margin_bottom = 23.0
+margin_right = 80.0
+margin_bottom = 26.0
 focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 enabled_focus_mode = 0
 script = ExtResource( 1 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer/ForceBios"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer/ForceBios"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Force Bios copy"
-align = 1
+margin_right = -10.0
+text = "FORCE"
+align = 2
 valign = 1
 
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer/ForceBios"]
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer/ForceBios"]
 anchor_right = 1.0
 
-[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_top = 27.0
-margin_right = 463.0
-margin_bottom = 27.0
+[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_top = 30.0
+margin_right = 80.0
+margin_bottom = 30.0
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_top = 31.0
-margin_right = 463.0
-margin_bottom = 54.0
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_top = 34.0
+margin_right = 80.0
+margin_bottom = 60.0
 
-[node name="ForceDuckStation" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer2"]
+[node name="ForceDuckStation" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer2"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 463.0
-margin_bottom = 23.0
+margin_right = 80.0
+margin_bottom = 26.0
 focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 enabled_focus_mode = 0
 script = ExtResource( 1 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer2/ForceDuckStation"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer2/ForceDuckStation"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Force check for download and install of duckstation"
-align = 1
+margin_right = -10.0
+text = "FORCE"
+align = 2
 valign = 1
 
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer2/ForceDuckStation"]
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer2/ForceDuckStation"]
 anchor_right = 1.0
 
-[node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_top = 58.0
-margin_right = 463.0
-margin_bottom = 58.0
+[node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_top = 64.0
+margin_right = 80.0
+margin_bottom = 64.0
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_top = 62.0
-margin_right = 463.0
-margin_bottom = 85.0
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_top = 68.0
+margin_right = 80.0
+margin_bottom = 94.0
 
-[node name="ForceGameSettings" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer3"]
+[node name="ForceGameSettings" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 463.0
-margin_bottom = 23.0
+margin_right = 80.0
+margin_bottom = 26.0
 focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 enabled_focus_mode = 0
 script = ExtResource( 1 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer3/ForceGameSettings"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer3/ForceGameSettings"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Force check for download and install of gamesettings"
-align = 1
+margin_right = -10.0
+text = "FORCE"
+align = 2
 valign = 1
 
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer3/ForceGameSettings"]
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer3/ForceGameSettings"]
 anchor_right = 1.0
 
-[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_top = 89.0
-margin_right = 463.0
-margin_bottom = 89.0
+[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_top = 98.0
+margin_right = 80.0
+margin_bottom = 98.0
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2"]
-margin_top = 93.0
-margin_right = 463.0
-margin_bottom = 116.0
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2"]
+margin_top = 102.0
+margin_right = 80.0
+margin_bottom = 128.0
 
-[node name="ForceXDelta" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer4"]
+[node name="ForceXDelta" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_right = 463.0
-margin_bottom = 23.0
+margin_right = 80.0
+margin_bottom = 26.0
 focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 enabled_focus_mode = 0
 script = ExtResource( 1 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer4/ForceXDelta"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer4/ForceXDelta"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "Force check for download and install of xdelta"
-align = 1
+margin_right = -10.0
+text = "FORCE"
+align = 2
 valign = 1
 
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer4/ForceXDelta"]
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer/VBoxContainer2/HBoxContainer4/ForceXDelta"]
 anchor_right = 1.0
 
-[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer"]
-margin_left = 971.0
-margin_right = 986.0
-margin_bottom = 116.0
-rect_min_size = Vector2( 15, 0 )
+[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_top = 216.0
+margin_right = 889.0
+margin_bottom = 216.0
 
-[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 198.0
-margin_right = 986.0
-margin_bottom = 198.0
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_top = 220.0
+margin_right = 889.0
+margin_bottom = 246.0
 
-[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 202.0
-margin_right = 986.0
-margin_bottom = 225.0
-
-[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer6"]
-margin_right = 15.0
-margin_bottom = 23.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="ForceUpdate" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer6"]
+[node name="ForceUpdate" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 19.0
-margin_right = 967.0
-margin_bottom = 23.0
+margin_right = 889.0
+margin_bottom = 26.0
 focus_mode = 0
 size_flags_horizontal = 3
 toggle_mode = true
 enabled_focus_mode = 0
 script = ExtResource( 1 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer6/ForceUpdate"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer6/ForceUpdate"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "Force check for download and update of CTROnline"
 align = 1
 valign = 1
 
-[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer6/ForceUpdate"]
+[node name="CheckBox" type="CheckBox" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2/HBoxContainer6/ForceUpdate"]
 anchor_right = 1.0
 
-[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer6"]
-margin_left = 971.0
-margin_right = 986.0
-margin_bottom = 23.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="HBoxContainer7" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 229.0
-margin_right = 986.0
-margin_bottom = 279.0
-rect_min_size = Vector2( 0, 50 )
-
-[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer7"]
-margin_right = 15.0
-margin_bottom = 50.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2/HBoxContainer7"]
-margin_left = 19.0
-margin_right = 34.0
-margin_bottom = 50.0
-rect_min_size = Vector2( 15, 0 )
-
-[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/VBoxContainer2"]
-margin_top = 283.0
-margin_right = 986.0
-margin_bottom = 283.0
+[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer/VBoxContainer2"]
+margin_top = 250.0
+margin_right = 889.0
+margin_bottom = 297.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/RUN/HBoxContainer"]
+margin_left = 941.0
+margin_right = 986.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
 
 [node name="DIRECTORIES" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
 visible = false
@@ -647,570 +766,798 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 35.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_right = 986.0
-margin_bottom = 27.0
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer"]
+margin_right = 44.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
-margin_top = 5.0
-margin_right = 263.0
-margin_bottom = 22.0
-text = "Input bin (iso of the game to be patched)::"
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
-margin_left = 267.0
-margin_right = 410.0
-margin_bottom = 27.0
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer"]
+margin_left = 48.0
+margin_right = 937.0
+margin_bottom = 297.0
 size_flags_horizontal = 3
 
-[node name="InputLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer"]
+margin_right = 889.0
+margin_bottom = 13.0
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer"]
+margin_top = 17.0
+margin_right = 889.0
+margin_bottom = 280.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_right = 442.0
+margin_bottom = 263.0
+size_flags_horizontal = 3
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_right = 442.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 14.0
+margin_right = 442.0
+margin_bottom = 34.0
+size_flags_vertical = 6
+text = "Input bin (iso of the game to be patched)::"
+valign = 1
+
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 43.0
+margin_right = 442.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label2" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 57.0
+margin_right = 442.0
+margin_bottom = 77.0
+size_flags_vertical = 6
+text = "Output bin (iso of the patched game) :"
+valign = 1
+
+[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 86.0
+margin_right = 442.0
+margin_bottom = 91.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label3" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 100.0
+margin_right = 442.0
+margin_bottom = 120.0
+size_flags_vertical = 6
+text = "Bios File (fed to DuckStation) :"
+valign = 1
+
+[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 129.0
+margin_right = 442.0
+margin_bottom = 134.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label4" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 143.0
+margin_right = 442.0
+margin_bottom = 163.0
+size_flags_vertical = 6
+text = "DuckStation Directory:"
+valign = 1
+
+[node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 172.0
+margin_right = 442.0
+margin_bottom = 177.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label5" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 186.0
+margin_right = 442.0
+margin_bottom = 206.0
+size_flags_vertical = 6
+text = "DuckStation Settings Directory:"
+valign = 1
+
+[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 215.0
+margin_right = 442.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label6" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 229.0
+margin_right = 442.0
+margin_bottom = 249.0
+size_flags_vertical = 6
+text = "XDelta Directory:"
+valign = 1
+
+[node name="Control7" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 258.0
+margin_right = 442.0
+margin_bottom = 263.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 446.0
+margin_right = 889.0
+margin_bottom = 263.0
+size_flags_horizontal = 3
+
+[node name="Control7" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_right = 443.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 9.0
+margin_right = 443.0
+margin_bottom = 39.0
+size_flags_vertical = 3
+
+[node name="InputLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer"]
 unique_name_in_owner = true
-margin_left = 414.0
-margin_right = 914.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 371.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "./CTR - Crash Team Racing (USA).bin"
 caret_blink = true
 
-[node name="InputBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
+[node name="InputBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 918.0
-margin_right = 950.0
-margin_bottom = 27.0
+margin_left = 375.0
+margin_right = 407.0
+margin_bottom = 30.0
 text = "    "
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer/InputBrowse"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer/InputBrowse"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "..."
 align = 1
 valign = 1
 
-[node name="InputRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer"]
+[node name="InputRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
+icon_align = 1
 script = ExtResource( 8 )
 windowsDefault = "./CTR - Crash Team Racing (USA).bin"
 linuxDefault = "./CTR - Crash Team Racing (USA).bin"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer/InputRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer/InputRollback"]
 position = Vector2( 13.8599, 13.625 )
-scale = Vector2( 0.15678, 0.134 )
+scale = Vector2( 0.157, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 31.0
-margin_right = 986.0
-margin_bottom = 58.0
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 43.0
+margin_right = 443.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
-margin_top = 5.0
-margin_right = 238.0
-margin_bottom = 22.0
-text = "Output bin (iso of the patched game) :"
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 52.0
+margin_right = 443.0
+margin_bottom = 82.0
+size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
-margin_left = 242.0
-margin_right = 410.0
-margin_bottom = 27.0
-size_flags_horizontal = 3
-
-[node name="OutputLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
+[node name="OutputLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer5"]
 unique_name_in_owner = true
-margin_left = 414.0
-margin_right = 914.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 371.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "./ctr-u_Online60.bin"
 caret_blink = true
 
-[node name="OutputBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
+[node name="OutputBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer5"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 918.0
-margin_right = 950.0
-margin_bottom = 27.0
+margin_left = 375.0
+margin_right = 407.0
+margin_bottom = 30.0
 text = "    "
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5/OutputBrowse"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer5/OutputBrowse"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "..."
 align = 1
 valign = 1
 
-[node name="OutputRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5"]
+[node name="OutputRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer5"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
+icon_align = 1
 script = ExtResource( 8 )
 windowsDefault = "./ctr-u_Online60.bin"
 linuxDefault = "./ctr-u_Online60.bin"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer5/OutputRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer5/OutputRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 62.0
-margin_right = 986.0
-margin_bottom = 89.0
+[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 86.0
+margin_right = 443.0
+margin_bottom = 91.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
-margin_top = 5.0
-margin_right = 189.0
-margin_bottom = 22.0
-text = "Bios File (fed to DuckStation) :"
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 95.0
+margin_right = 443.0
+margin_bottom = 125.0
+size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
-margin_left = 193.0
-margin_right = 410.0
-margin_bottom = 27.0
-size_flags_horizontal = 3
-
-[node name="BiosLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
+[node name="BiosLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer6"]
 unique_name_in_owner = true
-margin_left = 414.0
-margin_right = 914.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 371.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "./bios.bin"
 caret_blink = true
 
-[node name="BiosBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
+[node name="BiosBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 918.0
-margin_right = 950.0
-margin_bottom = 27.0
+margin_left = 375.0
+margin_right = 407.0
+margin_bottom = 30.0
 text = "    "
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6/BiosBrowse"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer6/BiosBrowse"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "..."
 align = 1
 valign = 1
 
-[node name="BiosRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6"]
+[node name="BiosRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
+icon_align = 1
 script = ExtResource( 8 )
 windowsDefault = "./bios.bin"
 linuxDefault = "./bios.bin"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer6/BiosRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer6/BiosRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 93.0
-margin_right = 986.0
-margin_bottom = 120.0
+[node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 129.0
+margin_right = 443.0
+margin_bottom = 134.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
-margin_top = 5.0
-margin_right = 140.0
-margin_bottom = 22.0
-text = "DuckStation Directory:"
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 138.0
+margin_right = 443.0
+margin_bottom = 168.0
+size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
-margin_left = 144.0
-margin_right = 410.0
-margin_bottom = 27.0
-size_flags_horizontal = 3
-
-[node name="DuckStationLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
+[node name="DuckStationLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer2"]
 unique_name_in_owner = true
-margin_left = 414.0
-margin_right = 914.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 371.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "./duckstation/"
 caret_blink = true
 
-[node name="DuckStationBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
+[node name="DuckStationBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer2"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 918.0
-margin_right = 950.0
-margin_bottom = 27.0
+margin_left = 375.0
+margin_right = 407.0
+margin_bottom = 30.0
 text = "    "
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2/DuckStationBrowse"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer2/DuckStationBrowse"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "..."
 align = 1
 valign = 1
 
-[node name="DuckStationRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2"]
+[node name="DuckStationRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer2"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
+icon_align = 1
 script = ExtResource( 8 )
 windowsDefault = "./duckstation/"
 linuxDefault = "./duckstation/"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer2/DuckStationRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer2/DuckStationRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 124.0
-margin_right = 986.0
-margin_bottom = 151.0
+[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 172.0
+margin_right = 443.0
+margin_bottom = 177.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
-margin_top = 5.0
-margin_right = 192.0
-margin_bottom = 22.0
-text = "DuckStation Settings Directory:"
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 181.0
+margin_right = 443.0
+margin_bottom = 211.0
+size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
-margin_left = 196.0
-margin_right = 410.0
-margin_bottom = 27.0
-size_flags_horizontal = 3
-
-[node name="GameSettingsLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
+[node name="GameSettingsLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer3"]
 unique_name_in_owner = true
-margin_left = 414.0
-margin_right = 914.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 371.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "%USERPROFILE%/documents\\DuckStation/"
 caret_blink = true
 
-[node name="GameSettingsBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
+[node name="GameSettingsBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 918.0
-margin_right = 950.0
-margin_bottom = 27.0
+margin_left = 375.0
+margin_right = 407.0
+margin_bottom = 30.0
 text = "    "
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3/GameSettingsBrowse"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer3/GameSettingsBrowse"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "..."
 align = 1
 valign = 1
 
-[node name="GameSettingsRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3"]
+[node name="GameSettingsRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
+icon_align = 1
 script = ExtResource( 8 )
 windowsDefault = "%USERPROFILE%/documents/DuckStation/"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer3/GameSettingsRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer3/GameSettingsRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer"]
-margin_top = 155.0
-margin_right = 986.0
-margin_bottom = 182.0
+[node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 215.0
+margin_right = 443.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
-margin_top = 5.0
-margin_right = 112.0
-margin_bottom = 22.0
-text = "XDelta Directory:"
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 224.0
+margin_right = 443.0
+margin_bottom = 254.0
+size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
-margin_left = 116.0
-margin_right = 410.0
-margin_bottom = 27.0
-size_flags_horizontal = 3
-
-[node name="XDeltaLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
+[node name="XDeltaLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer4"]
 unique_name_in_owner = true
-margin_left = 414.0
-margin_right = 914.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 371.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "./xdelta/"
 caret_blink = true
 
-[node name="XDeltaBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
+[node name="XDeltaBrowse" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 918.0
-margin_right = 950.0
-margin_bottom = 27.0
+margin_left = 375.0
+margin_right = 407.0
+margin_bottom = 30.0
 text = "    "
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4/XDeltaBrowse"]
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer4/XDeltaBrowse"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 text = "..."
 align = 1
 valign = 1
 
-[node name="XDeltaRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4"]
+[node name="XDeltaRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
+icon_align = 1
 script = ExtResource( 8 )
 windowsDefault = "./xdelta/"
 linuxDefault = "./xdelta/"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/VBoxContainer/HBoxContainer4/XDeltaRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3/HBoxContainer4/XDeltaRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
+[node name="Control8" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer3"]
+margin_top = 258.0
+margin_right = 443.0
+margin_bottom = 263.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer/VBoxContainer"]
+margin_top = 284.0
+margin_right = 889.0
+margin_bottom = 297.0
+size_flags_vertical = 3
+
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/DIRECTORIES/HBoxContainer"]
+margin_left = 941.0
+margin_right = 986.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
 [node name="URL" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 35.0
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_right = 986.0
-margin_bottom = 27.0
+[node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer"]
+margin_right = 44.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
-margin_top = 5.0
-margin_right = 94.0
-margin_bottom = 22.0
-text = "URL of xdelta:"
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer"]
+margin_left = 48.0
+margin_right = 937.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
-margin_left = 98.0
-margin_right = 446.0
-margin_bottom = 27.0
+[node name="Control2" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer"]
+margin_right = 889.0
+margin_bottom = 13.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer"]
+margin_top = 17.0
+margin_right = 889.0
+margin_bottom = 237.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_right = 442.0
+margin_bottom = 220.0
 size_flags_horizontal = 3
 
-[node name="XDeltaURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
+[node name="Control8" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_right = 442.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 9.0
+margin_right = 442.0
+margin_bottom = 39.0
+size_flags_vertical = 3
+text = "URL of xdelta:"
+valign = 1
+
+[node name="Control9" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 43.0
+margin_right = 442.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label2" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 52.0
+margin_right = 442.0
+margin_bottom = 82.0
+size_flags_vertical = 3
+text = "URL of duckstation:"
+valign = 1
+
+[node name="Control10" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 86.0
+margin_right = 442.0
+margin_bottom = 91.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label3" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 95.0
+margin_right = 442.0
+margin_bottom = 125.0
+size_flags_vertical = 3
+text = "URL of the GameSettings:"
+valign = 1
+
+[node name="Control11" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 129.0
+margin_right = 442.0
+margin_bottom = 134.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label4" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 138.0
+margin_right = 442.0
+margin_bottom = 168.0
+size_flags_vertical = 3
+text = "URL of the client:"
+valign = 1
+
+[node name="Control12" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 172.0
+margin_right = 442.0
+margin_bottom = 177.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Label5" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 181.0
+margin_right = 442.0
+margin_bottom = 211.0
+size_flags_vertical = 3
+text = "URL of the patch:"
+valign = 1
+
+[node name="Control13" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+margin_top = 215.0
+margin_right = 442.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer"]
+margin_left = 446.0
+margin_right = 889.0
+margin_bottom = 220.0
+size_flags_horizontal = 3
+
+[node name="Control14" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_right = 443.0
+margin_bottom = 5.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 9.0
+margin_right = 443.0
+margin_bottom = 39.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="XDeltaURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer"]
 unique_name_in_owner = true
-margin_left = 450.0
-margin_right = 950.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 407.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "https://github.com/jmacd/xdelta-gpl/releases/download/v3.0.9/xdelta3-3.0.9-x64.exe.zip"
 caret_blink = true
 
-[node name="XDeltaURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer"]
+[node name="XDeltaURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://github.com/jmacd/xdelta-gpl/releases/download/v3.0.9/xdelta3-3.0.9-x64.exe.zip"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer/XDeltaURLRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer/XDeltaURLRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 31.0
-margin_right = 986.0
-margin_bottom = 58.0
+[node name="Control15" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 43.0
+margin_right = 443.0
+margin_bottom = 48.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
-margin_top = 5.0
-margin_right = 123.0
-margin_bottom = 22.0
-text = "URL of duckstation:"
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
-margin_left = 127.0
-margin_right = 446.0
-margin_bottom = 27.0
+[node name="HBoxContainer5" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 52.0
+margin_right = 443.0
+margin_bottom = 82.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="DuckStationURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
+[node name="DuckStationURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer5"]
 unique_name_in_owner = true
-margin_left = 450.0
-margin_right = 950.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 407.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "https://github.com/stenzek/duckstation/releases/download/latest/duckstation-windows-x64-release.zip"
 caret_blink = true
 
-[node name="DuckStationURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5"]
+[node name="DuckStationURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer5"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://github.com/stenzek/duckstation/releases/download/latest/duckstation-windows-x64-release.zip"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer5/DuckStationURLRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer5/DuckStationURLRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 62.0
-margin_right = 986.0
-margin_bottom = 89.0
+[node name="Control16" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 86.0
+margin_right = 443.0
+margin_bottom = 91.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
-margin_top = 5.0
-margin_right = 160.0
-margin_bottom = 22.0
-text = "URL of the GameSettings:"
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
-margin_left = 164.0
-margin_right = 446.0
-margin_bottom = 27.0
+[node name="HBoxContainer6" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 95.0
+margin_right = 443.0
+margin_bottom = 125.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="GameSettingsURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
+[node name="GameSettingsURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer6"]
 unique_name_in_owner = true
-margin_left = 450.0
-margin_right = 950.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 407.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/SCUS-94426.ini"
 caret_blink = true
 
-[node name="GameSettingsURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6"]
+[node name="GameSettingsURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer6"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/SCUS-94426.ini"
 linuxDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/SCUS-94426.ini"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer6/GameSettingsURLRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer6/GameSettingsURLRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 93.0
-margin_right = 986.0
-margin_bottom = 120.0
+[node name="Control17" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 129.0
+margin_right = 443.0
+margin_bottom = 134.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
-margin_top = 5.0
-margin_right = 113.0
-margin_bottom = 22.0
-text = "URL of the client:"
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
-margin_left = 117.0
-margin_right = 446.0
-margin_bottom = 27.0
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 138.0
+margin_right = 443.0
+margin_bottom = 168.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="ClientURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
+[node name="ClientURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer3"]
 unique_name_in_owner = true
-margin_left = 450.0
-margin_right = 950.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 407.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/client.zip"
 caret_blink = true
 
-[node name="ClientURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3"]
+[node name="ClientURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer3"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/client.zip"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer3/ClientURLRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer3/ClientURLRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2"]
-margin_top = 124.0
-margin_right = 986.0
-margin_bottom = 151.0
+[node name="Control18" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 172.0
+margin_right = 443.0
+margin_bottom = 177.0
+rect_min_size = Vector2( 0, 5 )
 
-[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
-margin_top = 5.0
-margin_right = 113.0
-margin_bottom = 22.0
-text = "URL of the patch:"
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
-margin_left = 117.0
-margin_right = 446.0
-margin_bottom = 27.0
+[node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 181.0
+margin_right = 443.0
+margin_bottom = 211.0
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="PatchURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
+[node name="PatchURLLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer4"]
 unique_name_in_owner = true
-margin_left = 450.0
-margin_right = 950.0
-margin_bottom = 27.0
-rect_min_size = Vector2( 500, 0 )
+margin_right = 407.0
+margin_bottom = 30.0
+rect_min_size = Vector2( 100, 0 )
+size_flags_horizontal = 3
 text = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/ctr-u_Online60.xdelta"
 caret_blink = true
 
-[node name="PatchURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4"]
+[node name="PatchURLRollback" type="Button" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer4"]
 unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
-margin_left = 954.0
-margin_right = 986.0
-margin_bottom = 27.0
+margin_left = 411.0
+margin_right = 443.0
+margin_bottom = 30.0
 text = "    "
 script = ExtResource( 8 )
 windowsDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/ctr-u_Online60.xdelta"
 linuxDefault = "https://online-ctr.com/wp-content/uploads/onlinectr_patches/ctr-u_Online60.xdelta"
 
-[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/VBoxContainer2/HBoxContainer4/PatchURLRollback"]
+[node name="Sprite" type="Sprite" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2/HBoxContainer4/PatchURLRollback"]
 position = Vector2( 13.8599, 13.625 )
 scale = Vector2( 0.15678, 0.134 )
 texture = ExtResource( 3 )
 
+[node name="Control19" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+margin_top = 215.0
+margin_right = 443.0
+margin_bottom = 220.0
+rect_min_size = Vector2( 0, 5 )
+
+[node name="Control" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer/VBoxContainer"]
+margin_top = 241.0
+margin_right = 889.0
+margin_bottom = 297.0
+size_flags_vertical = 3
+
+[node name="Control3" type="Control" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/URL/HBoxContainer"]
+margin_left = 941.0
+margin_right = 986.0
+margin_bottom = 297.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
 [node name="SETTINGS" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 35.0
+margin_top = 34.0
 
 [node name="HBoxContainer8" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer/SETTINGS"]
 anchor_right = 1.0
@@ -1327,32 +1674,32 @@ wrap_enabled = true
 [node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer"]
 margin_left = 1009.0
 margin_right = 1024.0
-margin_bottom = 277.0
+margin_bottom = 332.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="Control3" type="Control" parent="Panel/VBoxContainer"]
-margin_top = 318.0
+margin_top = 377.0
 margin_right = 1024.0
-margin_bottom = 330.0
+margin_bottom = 389.0
 rect_min_size = Vector2( 0, 12 )
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer"]
-margin_top = 334.0
+margin_top = 393.0
 margin_right = 1024.0
-margin_bottom = 445.0
+margin_bottom = 476.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.25
 
 [node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer3"]
 margin_right = 15.0
-margin_bottom = 111.0
+margin_bottom = 83.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="Console" type="RichTextLabel" parent="Panel/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 margin_left = 19.0
 margin_right = 1005.0
-margin_bottom = 111.0
+margin_bottom = 83.0
 size_flags_horizontal = 3
 custom_fonts/normal_font = SubResource( 15 )
 custom_styles/normal = SubResource( 14 )
@@ -1361,25 +1708,27 @@ bbcode_enabled = true
 [node name="Control4" type="Control" parent="Panel/VBoxContainer/HBoxContainer3"]
 margin_left = 1009.0
 margin_right = 1024.0
-margin_bottom = 111.0
+margin_bottom = 83.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="Control4" type="Control" parent="Panel/VBoxContainer"]
-margin_top = 449.0
+margin_top = 480.0
 margin_right = 1024.0
-margin_bottom = 461.0
+margin_bottom = 492.0
 rect_min_size = Vector2( 0, 12 )
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="Panel/VBoxContainer"]
-margin_top = 465.0
+margin_top = 496.0
 margin_right = 1024.0
-margin_bottom = 576.0
-rect_min_size = Vector2( 0, 111 )
-size_flags_stretch_ratio = 0.25
+margin_bottom = 555.0
+rect_min_size = Vector2( 0, 20 )
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.18
+theme = SubResource( 24 )
 
 [node name="Control5" type="Control" parent="Panel/VBoxContainer/HBoxContainer4"]
 margin_right = 15.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="RunButton" type="Button" parent="Panel/VBoxContainer/HBoxContainer4"]
@@ -1388,7 +1737,7 @@ modulate = Color( 0.498039, 0.498039, 0.498039, 0.498039 )
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
 margin_left = 19.0
 margin_right = 332.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_pivot_offset = Vector2( -141, -15 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -1403,7 +1752,6 @@ margin_top = 5.0
 margin_bottom = -15.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
-custom_fonts/font = SubResource( 17 )
 text = "RUN"
 align = 1
 valign = 1
@@ -1411,7 +1759,7 @@ valign = 1
 [node name="Control8" type="Control" parent="Panel/VBoxContainer/HBoxContainer4"]
 margin_left = 336.0
 margin_right = 351.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="SaveButton" type="Button" parent="Panel/VBoxContainer/HBoxContainer4"]
@@ -1419,7 +1767,7 @@ unique_name_in_owner = true
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
 margin_left = 355.0
 margin_right = 668.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_pivot_offset = Vector2( -141, -15 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -1432,7 +1780,6 @@ margin_top = 5.0
 margin_bottom = -15.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
-custom_fonts/font = SubResource( 17 )
 text = "SAVE"
 align = 1
 valign = 1
@@ -1440,7 +1787,7 @@ valign = 1
 [node name="Control6" type="Control" parent="Panel/VBoxContainer/HBoxContainer4"]
 margin_left = 672.0
 margin_right = 687.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="SaveAndRunButton" type="Button" parent="Panel/VBoxContainer/HBoxContainer4"]
@@ -1449,7 +1796,7 @@ modulate = Color( 0.498039, 0.498039, 0.498039, 0.498039 )
 self_modulate = Color( 0.784314, 0.917647, 1, 1 )
 margin_left = 691.0
 margin_right = 1005.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_pivot_offset = Vector2( -141, -15 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -1460,26 +1807,26 @@ script = ExtResource( 9 )
 [node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer4/SaveAndRunButton"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 5.0
+margin_top = -10.0
 margin_bottom = -15.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
-custom_fonts/font = SubResource( 17 )
-text = "SAVE AND RUN"
+text = "SAVE
+AND RUN"
 align = 1
 valign = 1
 
 [node name="Control7" type="Control" parent="Panel/VBoxContainer/HBoxContainer4"]
 margin_left = 1009.0
 margin_right = 1024.0
-margin_bottom = 111.0
+margin_bottom = 59.0
 rect_min_size = Vector2( 15, 0 )
 
 [node name="Control2" type="Control" parent="Panel/VBoxContainer"]
-margin_top = 580.0
+margin_top = 559.0
 margin_right = 1024.0
-margin_bottom = 600.0
-rect_min_size = Vector2( 0, 20 )
+margin_bottom = 599.0
+rect_min_size = Vector2( 0, 40 )
 
 [node name="HTTPRequestXDelta" type="HTTPRequest" parent="."]
 unique_name_in_owner = true
@@ -1498,7 +1845,6 @@ unique_name_in_owner = true
 
 [node name="DeleteConfirmationDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
-visible = true
 modulate = Color( 0.886275, 0.882353, 1, 1 )
 anchor_left = 0.15
 anchor_top = 0.3
@@ -1506,6 +1852,7 @@ anchor_right = 0.85
 anchor_bottom = 0.7
 rect_min_size = Vector2( 717, 240 )
 theme = SubResource( 19 )
+window_title = "Veuillez confirmer…"
 script = ExtResource( 10 )
 
 [node name="Label2" type="Label" parent="DeleteConfirmationDialog"]
