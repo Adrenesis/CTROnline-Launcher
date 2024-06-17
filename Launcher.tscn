@@ -225,7 +225,7 @@ margin_top = 12.0
 margin_right = 0.368042
 margin_bottom = 17.0
 grow_horizontal = 0
-text = "v0.2.0.0"
+text = "v0.2.0.1"
 
 [node name="FileDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
@@ -303,7 +303,6 @@ tab_align = 0
 
 [node name="RUN" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
 unique_name_in_owner = true
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 35.0
@@ -1230,6 +1229,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.05
 
 [node name="URL" type="Tabs" parent="Panel/VBoxContainer/HBoxContainer/Control/TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 35.0
