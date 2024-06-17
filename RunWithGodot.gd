@@ -173,9 +173,9 @@ func delete_directory(p_path : String):
 	var path = get_absolute_path(p_path)
 	var path_check = path.to_lower()
 	if (
-		(path.find("xdelta") != -1) or
-		(path.find("duckstation") != -1) or
-		(path.find("temp") != -1)
+		(path_check.find("xdelta") != -1) or
+		(path_check.find("duckstation") != -1) or
+		(path_check.find("temp") != -1)
 	):
 		os_delete_directory(path)
 		yield(get_tree(), "idle_frame")
@@ -187,6 +187,7 @@ func delete_directory(p_path : String):
 			"\"\nDO YOU WISH TO CONTINUE?")
 		runNode.deleteConfirmationDialog.popup()
 		yield(self, "delete_confirm_answered")
+			
 
 func delete_confirmed():
 	os_delete_directory(path_about_to_be_deleted)
