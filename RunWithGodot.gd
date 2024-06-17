@@ -117,9 +117,9 @@ func hash_file(path) -> String:
 
 
 func file_exists(path : String) -> bool:
-	var file := File.new()
-	var result = file.file_exists(get_absolute_path(path))
-	return result
+	var output = []
+	OS.execute("powershell", [ "-Command", "cmd /c if exist '" + get_absolute_path(path) + "' echo true"], true, output)
+	return output[0]
 
 func write_file(content : String, path : String):
 	var file := File.new()
@@ -193,8 +193,8 @@ func delete_confirmed():
 	print(path_about_to_be_deleted + " deleted")
 	emit_signal("delete_confirm_answered")
 
-func delete_canceled(action):
-#	print(action)
+func delete_canceled():
+	runNode.is_canceled = true
 	emit_signal("delete_confirm_answered")
 
 
@@ -257,15 +257,16 @@ func try_install_xdelta(force := false):
 func install_xdelta():
 	if directory_exists(runNode.xDeltaLineEdit.text):
 		yield(delete_directory(runNode.xDeltaLineEdit.text), "completed")
-	proxy_print("Downloading xdelta from github...")
-	download(runNode.xDeltaURLLineEdit.text 
-		, "./xdelta.zip"
-		, runNode.xDeltaHTTPRequest)
-	yield(self, "download_done")
-	proxy_print("Download Done.")
-	proxy_print("Extracting xdelta...")
-	os_extract_archive("./xdelta.zip", runNode.xDeltaLineEdit.text) 
-	proxy_print("Done.")
+	if not runNode.is_canceled:
+		proxy_print("Downloading xdelta from github...")
+		download(runNode.xDeltaURLLineEdit.text 
+			, "./xdelta.zip"
+			, runNode.xDeltaHTTPRequest)
+		yield(self, "download_done")
+		proxy_print("Download Done.")
+		proxy_print("Extracting xdelta...")
+		os_extract_archive("./xdelta.zip", runNode.xDeltaLineEdit.text) 
+		proxy_print("Done.")
 
 func try_install_duckstation(force := false):
 	if (force or (not directory_exists(runNode.duckStationLineEdit.text))):
@@ -283,8 +284,9 @@ func install_duckstation():
 	proxy_print("Creating duckstation files...")
 	if file_exists(runNode.duckStationLineEdit.text + "duckstation-qt-x64-ReleaseLTCG.exe"):
 		 yield(delete_directory(runNode.duckStationLineEdit.text), "completed")
-	os_extract_archive("./duckstation.zip", runNode.duckStationLineEdit.text) 
-	proxy_print("Done.")
+	if not runNode.is_canceled:
+		os_extract_archive("./duckstation.zip", runNode.duckStationLineEdit.text) 
+		proxy_print("Done.")
 
 func try_install_gamesettings(force := false):
 	if(force or (not file_exists(runNode.gameSettingsLineEdit.text + "gamesettings/SCUS-94426.ini"))): 
@@ -448,26 +450,31 @@ func custom_init(p_runNode: Node):
 	yield(main(), "completed")
 
 func main():
-	runNode.deleteConfirmationDialog.connect("confirmed", self, "delete_confirmed")
-	runNode.deleteConfirmationDialog.connect("custom_action", self, "delete_canceled")
+	runNode.deleteConfirmationDialog.get_ok().connect("pressed", self, "delete_confirmed")
+	runNode.deleteConfirmationDialog.get_cancel().connect("pressed", self, "delete_canceled")
+	runNode.deleteConfirmationDialog.get_close_button().connect("pressed", self, "delete_canceled")
 	if not runNode.skipXDeltaButton.pressed:
 		yield(try_install_xdelta(runNode.forceXDeltaButton.pressed), "completed")
-	if not runNode.skipDuckStationButton.pressed:
-		yield(try_install_duckstation(runNode.forceDuckStationButton.pressed), "completed")
-	if not runNode.skipGameSettingsButton.pressed:
-		yield(try_install_gamesettings(runNode.forceGameSettingsButton.pressed), "completed")
-	if not runNode.skipBiosButton.pressed:
-		yield(try_install_bios(runNode.forceBiosButton.pressed), "completed")
-	yield(download_last_client(), "completed")
-	yield(check_update_to_be_done(runNode.forceUpdateButton.pressed), "completed")
-	yield(generate_cue(), "completed")
-	if has_update_to_be_done:
-		yield(update_ctronline(), "completed")
-	else:
-		proxy_print("Game already updated.")
-	start_game()
-	runNode.deleteConfirmationDialog.disconnect("confirmed", self, "delete_confirmed")
-	runNode.deleteConfirmationDialog.disconnect("custom_action", self, "delete_canceled")
+	if not runNode.is_canceled:
+		if not runNode.skipDuckStationButton.pressed:
+			yield(try_install_duckstation(runNode.forceDuckStationButton.pressed), "completed")
+	print(runNode.is_canceled)
+	if not runNode.is_canceled:
+		if not runNode.skipGameSettingsButton.pressed:
+			yield(try_install_gamesettings(runNode.forceGameSettingsButton.pressed), "completed")
+		if not runNode.skipBiosButton.pressed:
+			yield(try_install_bios(runNode.forceBiosButton.pressed), "completed")
+		yield(download_last_client(), "completed")
+		yield(check_update_to_be_done(runNode.forceUpdateButton.pressed), "completed")
+		yield(generate_cue(), "completed")
+		if has_update_to_be_done:
+			yield(update_ctronline(), "completed")
+		else:
+			proxy_print("Game already updated.")
+		start_game()
+		runNode.deleteConfirmationDialog.get_ok().disconnect("pressed", self, "delete_confirmed")
+		runNode.deleteConfirmationDialog.get_cancel().disconnect("pressed", self, "delete_canceled")
+		runNode.deleteConfirmationDialog.get_close_button().disconnect("pressed", self, "delete_canceled")
 
 func queue_free():
 	if function_state != null:

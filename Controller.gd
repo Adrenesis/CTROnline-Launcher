@@ -241,8 +241,9 @@ func username_changed(username : String):
 		saveAndRunButton.set_disabled(true)
 		runButton.set_disabled(true)
 	else:
-		saveAndRunButton.set_disabled(false)
-		runButton.set_disabled(false)
+		if not is_running:
+			saveAndRunButton.set_disabled(false)
+			runButton.set_disabled(false)
 
 func fps_30_pressed():
 	if fps30CheckBox.pressed:
@@ -399,6 +400,7 @@ func save_button_pressed():
 	save_config()
 
 func run_button_pressed():
+	is_running = true
 	saveAndRunButton.set_disabled(true)
 	runButton.set_disabled(true)
 #	print(get_run_string())
@@ -413,8 +415,10 @@ func run_button_pressed():
 #	OS.execute("powershell", args, false, output, true, true)
 	saveAndRunButton.set_disabled(false)
 	runButton.set_disabled(false)
-	if not keepRunningButton.pressed:
+	if not keepRunningButton.pressed and not is_canceled:
 		get_tree().quit()
+	is_running = false
+	is_canceled = false
 
 func get_run_string():
 	#TODO support Linux
