@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/app_logo.PNG-e8d44987ce30ebd4b7ab037cc0095b7a.stex"
+path="res://.import/hex-scratched.png-7ae0d95f49db1178de84214d5147ebe2.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://app_logo.PNG"
-dest_files=[ "res://.import/app_logo.PNG-e8d44987ce30ebd4b7ab037cc0095b7a.stex" ]
+source_file="res://graphics/hex-scratched.png"
+dest_files=[ "res://.import/hex-scratched.png-7ae0d95f49db1178de84214d5147ebe2.stex" ]
 
 [params]
 

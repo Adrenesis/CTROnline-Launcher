@@ -11,9 +11,14 @@ config_version=4
 [application]
 
 config/name="Ctr Online- Launcher"
-run/main_scene="res://Launcher.tscn"
-boot_splash/image="res://OnlineCTR-Logo.png"
-config/icon="res://app_logo.PNG"
+run/main_scene="res://scenes/Launcher.tscn"
+boot_splash/image="res://graphics/OnlineCTR-Logo.png"
+config/icon="res://graphics/app_logo.PNG"
+
+[autoload]
+
+Utils="*res://scenes/Utils.tscn"
+Downloader="*res://scenes/Downloader.tscn"
 
 [gui]
 
@@ -28,4 +33,3 @@ common/enable_pause_aware_picking=true
 quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
-environment/default_environment="res://default_env.tres"

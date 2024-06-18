@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/hex-scratched.png-459555cb85f6fbcdd183a7839a528d75.stex"
+path="res://.import/OnlineCTR-Logo.png-581e2b77374ac2fee1cfb79198727037.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://hex-scratched.png"
-dest_files=[ "res://.import/hex-scratched.png-459555cb85f6fbcdd183a7839a528d75.stex" ]
+source_file="res://graphics/OnlineCTR-Logo.png"
+dest_files=[ "res://.import/OnlineCTR-Logo.png-581e2b77374ac2fee1cfb79198727037.stex" ]
 
 [params]
 

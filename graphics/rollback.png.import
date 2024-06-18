@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/rollback.png-92e57272c3bf30c84a8a96fbb2f8ea69.stex"
+path="res://.import/rollback.png-9149bb07e2c03a8cc42211387ccc9d95.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://rollback.png"
-dest_files=[ "res://.import/rollback.png-92e57272c3bf30c84a8a96fbb2f8ea69.stex" ]
+source_file="res://graphics/rollback.png"
+dest_files=[ "res://.import/rollback.png-9149bb07e2c03a8cc42211387ccc9d95.stex" ]
 
 [params]
 

@@ -1,6 +1,6 @@
 extends Control
 
-const RunWithGodot = preload("res://RunWithGodot.gd")
+const RunWithGodot = preload("res://scripts/RunWithGodot.gd")
 
 
 var default_min_size_default_font 
@@ -95,6 +95,8 @@ var clientHTTPRequest = null
 var patchHTTPRequest = null
 
 func _ready():
+	Utils.controller = self
+	
 	console = get_node("%Console")
 	
 	runButton = get_node("%RunButton")
@@ -235,6 +237,23 @@ func on_window_resize():
 	theme.set("CheckBox/constants/check_vadjust", (9.0 * (min_size_run_font/default_min_size_run_font) - 9.0))
 
 
+func proxy_print(string : String):
+	var time = ""
+	if OS.get_time().hour < 10:
+		time += "0"
+	time += str(OS.get_time().hour) + ":"
+	
+	if OS.get_time().minute < 10:
+		time += "0"
+	time += str(OS.get_time().minute) + ":"
+	
+	if OS.get_time().second < 10:
+		time += "0"
+	time += str(OS.get_time().second)
+	var text = string
+	console.append_bbcode("\n" + "[" + time + "]: " + text)
+	console.scroll_to_line(console.get_line_count()-1)
+
 func username_changed(username : String):
 #	print([username.length()])
 	if username.length() == 0:
@@ -286,54 +305,28 @@ func file_dialog_confirmed(path):
 func browse_bios():
 	fileDialog.mode = FileDialog.MODE_OPEN_FILE
 	fileDialog.filters = ["*.bin"]
-	var path = biosLineEdit.text.rsplit("/", true, 1)[0]
-	if biosLineEdit.text.begins_with("."):
-		path = (
-			OS.get_executable_path().rsplit("/", true, 1)[0] + 
-			biosLineEdit.text.substr(1).rsplit("/", true, 1)[0] + 
-			"/"
-		)
-	fileDialog.current_dir = path
+	fileDialog.current_dir = Utils.get_absolute_path(biosLineEdit.text)
 	browsingBios = true
 	fileDialog.popup()
 
 
 func browse_duckstation():
 	fileDialog.mode = FileDialog.MODE_OPEN_DIR
-	var path = duckStationLineEdit.text
-	if duckStationLineEdit.text.begins_with("."):
-		path = (
-			OS.get_executable_path().rsplit("/", true, 1)[0] + 
-			duckStationLineEdit.text.substr(1)
-		)
-#		print(path)
-	fileDialog.current_dir = path
+	fileDialog.current_dir = Utils.get_absolute_path(duckStationLineEdit.text)
 	browsingDuckStation = true
 	fileDialog.popup()
 
 
 func browse_gamesettings():
 	fileDialog.mode = FileDialog.MODE_OPEN_DIR
-	var path = gameSettingsLineEdit.text
-	if gameSettingsLineEdit.text.begins_with("."):
-		path = (
-			OS.get_executable_path().rsplit("/", true, 1)[0] + 
-			gameSettingsLineEdit.text.substr(1)
-		)
-	fileDialog.current_dir = path
+	fileDialog.current_dir = Utils.get_absolute_path(gameSettingsLineEdit.text)
 	browsingGameSettings = true
 	fileDialog.popup()
 
 
 func browse_xdelta():
 	fileDialog.mode = FileDialog.MODE_OPEN_DIR
-	var path = xDeltaLineEdit.text
-	if xDeltaLineEdit.text.begins_with("."):
-		path = (
-			OS.get_executable_path().rsplit("/", true, 1)[0] + 
-			xDeltaLineEdit.text.substr(1)
-		)
-	fileDialog.current_dir = path
+	fileDialog.current_dir = Utils.get_absolute_path(xDeltaLineEdit.text)
 	browsingXDelta = true
 	fileDialog.popup()
 
@@ -341,14 +334,7 @@ func browse_xdelta():
 func browse_input():
 	fileDialog.mode = FileDialog.MODE_OPEN_FILE
 	fileDialog.filters = ["*.bin"]
-	var path = inputLineEdit.text.rsplit("/", true, 1)[0]
-	if inputLineEdit.text.begins_with("."):
-		path = (
-			OS.get_executable_path().rsplit("/", true, 1)[0] + 
-			biosLineEdit.text.substr(1).rsplit("/", true, 1)[0] + 
-			"/"
-		)
-	fileDialog.current_dir = path
+	fileDialog.current_dir = Utils.get_absolute_path(inputLineEdit.text)
 	browsingInput = true
 	fileDialog.popup()
 
@@ -356,14 +342,7 @@ func browse_input():
 func browse_output():
 	fileDialog.mode = FileDialog.MODE_OPEN_FILE
 	fileDialog.filters = ["*.bin"]
-	var path = outputLineEdit.text.rsplit("/", true, 1)[0]
-	if outputLineEdit.text.begins_with("."):
-		path = (
-			OS.get_executable_path().rsplit("/", true, 1)[0] + 
-			outputLineEdit.text.substr(1).rsplit("/", true, 1)[0] + 
-			"/"
-		)
-	fileDialog.current_dir = path
+	fileDialog.current_dir = Utils.get_absolute_path(outputLineEdit.text)
 	browsingOutput = true
 	fileDialog.popup()
 
@@ -404,46 +383,16 @@ func run_button_pressed():
 	saveAndRunButton.set_disabled(true)
 	runButton.set_disabled(true)
 #	print(get_run_string())
-	var output = []
-	var args = get_run_string().split(" ")
-	args.insert(0, "-Command")
 	var rwg := RunWithGodot.new()
 	add_child(rwg)
 	yield(rwg.custom_init(self), "completed")
 	rwg.queue_free()
-#	OS.execute("cmd.exe", ["/c", ("echo " + usernameLineEdit.text + "> ./username.ini") ], false, output, true, true)
-#	OS.execute("powershell", args, false, output, true, true)
 	saveAndRunButton.set_disabled(false)
 	runButton.set_disabled(false)
 	if not keepRunningButton.pressed and not is_canceled:
 		get_tree().quit()
 	is_running = false
 	is_canceled = false
-
-func get_run_string():
-	#TODO support Linux
-	return get_win_run_string()
-
-func get_win_run_string():
-	var string = ".\\autoupdater.bat"
-	string += " -f" if fps30Button.pressed else ""
-	string += " -sb" if skipBiosButton.pressed else ""
-	string += " -sd" if skipDuckStationButton.pressed else ""
-	string += " -ss" if skipGameSettingsButton.pressed else ""
-	string += " -sx" if skipXDeltaButton.pressed else ""
-	string += " -fb" if forceBiosButton.pressed else ""
-	string += " -fd" if forceDuckStationButton.pressed else ""
-	string += " -fs" if forceGameSettingsButton.pressed else ""
-	string += " -fx" if forceXDeltaButton.pressed else ""
-	string += " -fu" if forceUpdateButton.pressed else ""
-	string += " -i '" + inputLineEdit.text.replace("/", "\\") + "'"
-	string += " -o '" + outputLineEdit.text.replace("/", "\\") + "'"
-	string += " -b '" + biosLineEdit.text.replace("/", "\\") + "'"
-	string += " -d '" + duckStationLineEdit.text.replace("/", "\\") + "'"
-	string += " -s '" + gameSettingsLineEdit.text.replace("/", "\\") + "'"
-	string += " -x '" + xDeltaLineEdit.text.replace("/", "\\") + "'"
-	
-	return string
 
 
 func save_config():

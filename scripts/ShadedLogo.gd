@@ -2,7 +2,7 @@ extends Sprite
 
 export var up := false
 
-func _process(delta):
+func _process(_delta):
 #	print(OS.window_size)
 	scale = OS.window_size / 1000
 	scale.y = 0.034

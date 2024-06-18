@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/hex-scratched_seemless.png-7919e9a93c9f2718b6f486b2df47253e.stex"
+path="res://.import/scanlines.png-ca88fd9fe2bd7a07559e5f8eed175f1f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://hex-scratched_seemless.png"
-dest_files=[ "res://.import/hex-scratched_seemless.png-7919e9a93c9f2718b6f486b2df47253e.stex" ]
+source_file="res://graphics/scanlines.png"
+dest_files=[ "res://.import/scanlines.png-ca88fd9fe2bd7a07559e5f8eed175f1f.stex" ]
 
 [params]
 
