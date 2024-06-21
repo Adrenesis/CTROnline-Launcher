@@ -225,13 +225,14 @@ texture = ExtResource( 11 )
 script = ExtResource( 12 )
 
 [node name="VersionLabel" type="Label" parent="."]
+unique_name_in_owner = true
 anchor_left = 1.0
 anchor_right = 1.0
 margin_top = 12.0
 margin_right = 0.368042
 margin_bottom = 17.0
 grow_horizontal = 0
-text = "v0.2.0.1"
+text = "v0.2.0.2"
 
 [node name="FileDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
@@ -1849,6 +1850,12 @@ unique_name_in_owner = true
 [node name="HTTPRequestPatch" type="HTTPRequest" parent="."]
 unique_name_in_owner = true
 
+[node name="HTTPRequestUpdate" type="HTTPRequest" parent="."]
+unique_name_in_owner = true
+
+[node name="HTTPRequestVersion" type="HTTPRequest" parent="."]
+unique_name_in_owner = true
+
 [node name="DeleteConfirmationDialog" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
 modulate = Color( 0.886275, 0.882353, 1, 1 )
@@ -1862,6 +1869,29 @@ window_title = "Veuillez confirmer…"
 script = ExtResource( 10 )
 
 [node name="Label2" type="Label" parent="DeleteConfirmationDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -44.0
+size_flags_horizontal = 0
+align = 1
+valign = 1
+
+[node name="UpdateConfirmationDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+modulate = Color( 0.886275, 0.882353, 1, 1 )
+anchor_left = 0.15
+anchor_top = 0.3
+anchor_right = 0.85
+anchor_bottom = 0.7
+rect_min_size = Vector2( 717, 240 )
+theme = SubResource( 19 )
+window_title = "Veuillez confirmer…"
+script = ExtResource( 10 )
+
+[node name="Label2" type="Label" parent="UpdateConfirmationDialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0

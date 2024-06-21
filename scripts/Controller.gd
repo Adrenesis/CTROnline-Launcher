@@ -1,6 +1,7 @@
 extends Control
 
 const RunWithGodot = preload("res://scripts/RunWithGodot.gd")
+const LauncherUpdater = preload("res://scripts/LauncherUpdater.gd")
 
 
 var default_min_size_default_font 
@@ -79,6 +80,7 @@ var patchURLRollback = null
 
 var fileDialog = null
 var deleteConfirmationDialog = null
+var updateConfirmationDialog = null
 
 var browsingBios = false
 var browsingDuckStation = false
@@ -93,8 +95,13 @@ var duckStationHTTPRequest = null
 var gameSettingsHTTPRequest = null
 var clientHTTPRequest = null
 var patchHTTPRequest = null
+var updateHTTPRequest = null
+var versionHTTPRequest = null
+
+var versionLabel = null
 
 func _ready():
+	is_running = true
 	Utils.controller = self
 	
 	console = get_node("%Console")
@@ -133,6 +140,8 @@ func _ready():
 	gameSettingsHTTPRequest = get_node("%HTTPRequestGameSettings")
 	clientHTTPRequest = get_node("%HTTPRequestClient")
 	patchHTTPRequest = get_node("%HTTPRequestPatch")
+	updateHTTPRequest = get_node("%HTTPRequestUpdate")
+	versionHTTPRequest = get_node("%HTTPRequestPatch")
 	
 	forceBiosButton.connect("toggled", self, "force_bios_pressed")
 	forceDuckStationButton.connect("toggled", self, "force_duckstation_pressed")
@@ -174,8 +183,8 @@ func _ready():
 	gameSettingsURLLineEdit = get_node("%GameSettingsURLLineEdit")
 	clientURLLineEdit = get_node("%ClientURLLineEdit")
 	patchURLLineEdit = get_node("%PatchURLLineEdit")
-		
-	usernameLineEdit.connect("text_changed", self, "username_changed")
+	
+	versionLabel = get_node("%VersionLabel")
 	
 	fps30CheckBox.connect("pressed", self, "fps_30_pressed")
 	
@@ -202,7 +211,10 @@ func _ready():
 	fileDialog.get_close_button().connect("pressed", self, "file_dialog_canceled")
 	
 	deleteConfirmationDialog = get_node("%DeleteConfirmationDialog")
-	deleteConfirmationDialog.popup_exclusive = true
+	deleteConfirmationDialog.popup_exclusive = true	
+	
+	updateConfirmationDialog = get_node("%UpdateConfirmationDialog")
+	updateConfirmationDialog.popup_exclusive = true
 	
 	run_button_parent = runButton.get_parent()
 	
@@ -215,6 +227,39 @@ func _ready():
 	get_tree().root.connect("size_changed", self, "on_window_resize")
 	
 	load_config()
+	if Utils.directory_exists("./temp/"):
+		yield(Utils.delete_directory("./temp/"), "completed")
+	var lu = LauncherUpdater.new()
+	add_child(lu)
+	
+	lu.main()
+		
+	usernameLineEdit.connect("text_changed", self, "username_changed")
+	
+
+var on_top_set = false
+
+func set_on_top():
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
+	OS.window_resizable = true
+	OS.set_window_always_on_top(false)
+
+func _process(delta):
+	print(OS.is_window_always_on_top())
+	if not on_top_set:
+		on_top_set = true
+		set_on_top()
+	
+#	set_on_top()
+	set_process(false)
+	
+	
+	
+
+#	OS.set_window_always_on_top(false)
 
 func on_window_resize():
 	min_size_default_font = default_min_size_default_font
@@ -478,7 +523,7 @@ func load_config():
 		
 		
 		usernameLineEdit.text = config.get_value("settings", "username", String(usernameLineEdit.text))
-		username_changed(usernameLineEdit.text)
+
 	else:
 		print("no config to load")
 		if OS.get_name() == "Windows":

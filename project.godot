@@ -20,6 +20,14 @@ config/icon="res://graphics/app_logo.PNG"
 Utils="*res://scenes/Utils.tscn"
 Downloader="*res://scenes/Downloader.tscn"
 
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/Launch/plugin.cfg", "res://addons/zylann.editor_debugger/plugin.cfg" )
+
+[global]
+
+fps=false
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true

@@ -16,14 +16,18 @@ var function_state : GDScriptFunctionState
 
 		
 func try_install_xdelta(force := false):
-	if (force or (not Utils.directory_exists(runNode.xDeltaLineEdit.text))): 
+	var path = Utils.get_absolute_path(runNode.xDeltaLineEdit.text, true)
+	if (force or (not Utils.directory_exists(path))): 
 		yield(install_xdelta(), "completed")
 	else:
 		yield(get_tree(), "idle_frame")
 
 func install_xdelta():
-	if Utils.directory_exists(runNode.xDeltaLineEdit.text):
-		yield(Utils.delete_directory(runNode.xDeltaLineEdit.text), "completed")
+	yield(get_tree(), "idle_frame")
+	var path = Utils.get_absolute_path(runNode.xDeltaLineEdit.text, true)
+	if Utils.directory_exists(path):
+		yield(Utils.delete_directory(path), "completed")
+		yield(get_tree(), "idle_frame")
 	if not runNode.is_canceled:
 		Utils.controller.proxy_print("Downloading xdelta from github...")
 		Downloader.download(runNode.xDeltaURLLineEdit.text 
@@ -32,16 +36,20 @@ func install_xdelta():
 		yield(Downloader, "download_done")
 		Utils.controller.proxy_print("Download Done.")
 		Utils.controller.proxy_print("Extracting xdelta...")
-		Utils.os_extract_archive("./xdelta.zip", runNode.xDeltaLineEdit.text) 
+		yield(get_tree(), "idle_frame")
+		Utils.os_extract_archive("./xdelta.zip", path) 
+		yield(get_tree(), "idle_frame")
 		Utils.controller.proxy_print("Done.")
 
 func try_install_duckstation(force := false):
-	if (force or (not Utils.directory_exists(runNode.duckStationLineEdit.text))):
+	var path = Utils.get_absolute_path(runNode.duckStationLineEdit.text, true)
+	if (force or (not Utils.directory_exists(path))):
 		yield(install_duckstation(), "completed")
 	else:
 		yield(get_tree(), "idle_frame")
 
 func install_duckstation():
+	yield(get_tree(), "idle_frame")
 	Utils.controller.proxy_print("Downloading DuckStation from github...")
 	Downloader.download(runNode.duckStationURLLineEdit.text 
 		, "./duckstation.zip"
@@ -49,57 +57,73 @@ func install_duckstation():
 	yield(Downloader, "download_done")
 	Utils.controller.proxy_print("Download done.")
 	Utils.controller.proxy_print("Creating duckstation files...")
-	if Utils.file_exists(runNode.duckStationLineEdit.text + "duckstation-qt-x64-ReleaseLTCG.exe"):
-		 yield(Utils.delete_directory(runNode.duckStationLineEdit.text), "completed")
+	var path = Utils.get_absolute_path(runNode.duckStationLineEdit.text, true)
+	if Utils.file_exists(path + "duckstation-qt-x64-ReleaseLTCG.exe"):
+		yield(Utils.delete_directory(path), "completed")
+		yield(get_tree(), "idle_frame")
 	if not runNode.is_canceled:
-		Utils.os_extract_archive("./duckstation.zip", runNode.duckStationLineEdit.text) 
+		yield(get_tree(), "idle_frame")
+		Utils.os_extract_archive("./duckstation.zip", path) 
+		yield(get_tree(), "idle_frame")
 		Utils.controller.proxy_print("Done.")
 
 func try_install_gamesettings(force := false):
-	if(force or (not Utils.file_exists(runNode.gameSettingsLineEdit.text + "gamesettings/SCUS-94426.ini"))): 
+	var path = Utils.get_absolute_path(runNode.gameSettingsLineEdit.text, true)
+	if(force or (not Utils.file_exists(path + "gamesettings/SCUS-94426.ini"))): 
 		yield(install_gamesettings(), "completed")
 	else:
 		yield(get_tree(), "idle_frame")
 
 func install_gamesettings():
-	if not Utils.directory_exists(runNode.gameSettingsLineEdit.text):
-		Utils.make_directory(runNode.gameSettingsLineEdit.text)
-	if not Utils.directory_exists(runNode.gameSettingsLineEdit.text + "gamesettings"):
-		Utils.make_directory(runNode.gameSettingsLineEdit.text + "gamesettings")
-	if not Utils.directory_exists(runNode.gameSettingsLineEdit.text + "gamesettings"):
+	yield(get_tree(), "idle_frame")
+	var path = Utils.get_absolute_path(runNode.gameSettingsLineEdit.text, true)
+	if not Utils.directory_exists(path):
+		Utils.make_directory(path)
+		yield(get_tree(), "idle_frame")
+	if not Utils.directory_exists(path + "gamesettings"):
+		Utils.make_directory(path + "gamesettings")
+		yield(get_tree(), "idle_frame")
+	if not Utils.directory_exists(path + "gamesettings"):
 		Utils.controller.proxy_print("ERROR: couldn't create DuckStation GameSettings folder")
 		yield(get_tree(), "idle_frame")
 	else:
 		Utils.controller.proxy_print("Downloading GameSettings from CTROnline...")
 		Downloader.download(runNode.gameSettingsURLLineEdit.text
-			, runNode.gameSettingsLineEdit.text + "gamesettings/SCUS-94426.ini"
+			, path + "gamesettings/SCUS-94426.ini"
 			, runNode.gameSettingsHTTPRequest)
 		yield(Downloader, "download_done")
 		Utils.controller.proxy_print("Download done.")
 
 func try_install_bios(force := true):
-	if(force or (not Utils.file_exists(runNode.gameSettingsLineEdit.text + "bios/bios.bin"))): 
+	var path = Utils.get_absolute_path(runNode.gameSettingsLineEdit.text, true)
+	if(force or (not Utils.file_exists(path + "bios/bios.bin"))): 
 		yield(install_bios(), "completed")
 	else:
 		yield(get_tree(), "idle_frame")
 
 func install_bios():
-	if not Utils.directory_exists(runNode.gameSettingsLineEdit.text + "bios"):
-		Utils.make_directory(runNode.gameSettingsLineEdit.text)
-	if not Utils.directory_exists(runNode.gameSettingsLineEdit.text + "bios"):
-		Utils.Utils.controller.proxy_print("ERROR: could not create bios output directory")
+	yield(get_tree(), "idle_frame")
+	var path = Utils.get_absolute_path(runNode.gameSettingsLineEdit.text, true)
+	if not Utils.directory_exists(path + "bios"):
+		Utils.make_directory(path)
+		yield(get_tree(), "idle_frame")
+	if not Utils.directory_exists(path + "bios"):
+		Utils.controller.proxy_print("ERROR: could not create bios output directory")
 		yield(get_tree(), "idle_frame")
 	else:
 		Utils.controller.proxy_print("Copying bios...")
 		yield(get_tree(), "idle_frame")
 		#echo F|xcopy %BiosFile% %DuckStationSettingsFolder%\bios\bios.bin>nul
-		Utils.copy_file(runNode.biosLineEdit.text, runNode.gameSettingsLineEdit.text + "bios/bios.bin")
+		Utils.copy_file(runNode.biosLineEdit.text, path + "bios/bios.bin")
 		Utils.controller.proxy_print("Done")
+		yield(get_tree(), "idle_frame")
 
 func download_last_client():
+	yield(get_tree(), "idle_frame")
 	Utils.controller.proxy_print("echo Downloading last client...")
 	if Utils.directory_exists("./temp/"):
 		yield(Utils.delete_directory("./temp/"), "completed")
+		yield(get_tree(), "idle_frame")
 	Utils.make_directory("./temp/")
 	if not Utils.directory_exists("./temp/"):
 		yield(get_tree(), "idle_frame")
@@ -113,18 +137,15 @@ func download_last_client():
 var has_update_to_be_done = false
 
 func check_update_to_be_done(force := false):
-
-	
+	yield(get_tree(), "idle_frame")
 	Utils.os_extract_archive("./new_client.zip", "./temp/")
+	yield(get_tree(), "idle_frame")
 	if force:
 		yield(get_tree(), "idle_frame")
 		has_update_to_be_done = true
 	if Utils.file_exists("./Client.exe"):
 		Utils.controller.proxy_print("echo client found, comparing...")
 #		print("found")
-		yield(get_tree(), "idle_frame")
-		yield(get_tree(), "idle_frame")
-		yield(get_tree(), "idle_frame")
 		yield(get_tree(), "idle_frame")
 		if Utils.are_files_different("./Client.exe", "./temp/Client.exe"):
 			Utils.controller.proxy_print("Files are different...")
@@ -155,22 +176,19 @@ func update_ctronline():
 		, "ctr-u_Online60.xdelta"
 		, runNode.patchHTTPRequest)
 		yield(Downloader, "download_done")
-		Utils.controller.proxy_print("Downloading done.")
-		Utils.controller.proxy_print("Updating CTR Online...")
-		xdelta_cmd = Utils.get_os_xdelta_command()
-		xdelta_cmd += "-f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
 		
 	else:
 		Downloader.download(runNode.patchURLLineEdit.text
 			, "ctr-u_Online30.xdelta"
 			, runNode.patchHTTPRequest)
 		yield(Downloader, "download_done")
-		Utils.controller.proxy_print("Downloading done.")
-		Utils.controller.proxy_print("Updating CTR Online...")
-		xdelta_cmd = Utils.get_os_xdelta_command()
-		xdelta_cmd += "-f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online30.xdelta' '" + runNode.outputLineEdit.text + "'"
-#		xdelta_cmd = "%XDeltaFolder%/xdelta3-3.0.9-x64.exe -f -d -s '" + runNode.inputLineEdit.text + "' './ctr-u_Online60.xdelta' '" + runNode.outputLineEdit.text + "'"
-	OS.execute("powershell", ["-Command", xdelta_cmd])
+	
+	Utils.controller.proxy_print("Downloading done.")
+	Utils.controller.proxy_print("Updating CTR Online...")
+	xdelta_cmd = Utils.get_os_xdelta_command(runNode.fps30CheckBox.pressed)
+	print(xdelta_cmd)
+	yield(get_tree(), "idle_frame")
+	OS.execute("cmd", ["/c", xdelta_cmd])
 #	os_shell_execute(xdelta_cmd)
 	Utils.controller.proxy_print("Update done.")
 
@@ -225,7 +243,7 @@ func main():
 	if not runNode.is_canceled:
 		if not runNode.skipDuckStationButton.pressed:
 			yield(try_install_duckstation(runNode.forceDuckStationButton.pressed), "completed")
-	print(runNode.is_canceled)
+#	print(runNode.is_canceled)
 	if not runNode.is_canceled:
 		if not runNode.skipGameSettingsButton.pressed:
 			yield(try_install_gamesettings(runNode.forceGameSettingsButton.pressed), "completed")

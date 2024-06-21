@@ -17,7 +17,8 @@ func _process(delta : float):
 			var bodySize = used_http.get_body_size()
 			var downloadedBytes = used_http.get_downloaded_bytes()
 			var percent = int(downloadedBytes*100/bodySize)
-			Utils.controller.proxy_print("Downloading " + str(percent) + "%...")
+			if percent != 100:
+				Utils.controller.proxy_print("Downloading " + str(percent) + "%...")
 			waiting_download_print = false
 
 
@@ -49,5 +50,5 @@ func _http_request_completed(result, _response_code, _headers, _body):
 		if download_was_text:
 			Utils.write_file(_body.get_string_from_utf8(), download_path)
 	used_http.disconnect("request_completed", self, "_http_request_completed")
-	print(_response_code)
+	print("response_code: " + String(_response_code))
 	emit_signal("download_done")
