@@ -248,7 +248,7 @@ func set_on_top():
 	OS.set_window_always_on_top(false)
 
 func _process(delta):
-	print(OS.is_window_always_on_top())
+#	print(OS.is_window_always_on_top())
 	if not on_top_set:
 		on_top_set = true
 		set_on_top()
@@ -475,7 +475,7 @@ func save_config():
 	
 
 	# L'enregistrer sur dans un fichier (en écrasant le fichier déjà existant s'il y en a un).
-	print(OS.get_executable_path().rsplit("/", true, 1)[0] + "/" + "config.cfg")
+#	print(OS.get_executable_path().rsplit("/", true, 1)[0] + "/" + "config.cfg")
 	config.save(OS.get_executable_path().rsplit("/", true, 1)[0] + "/" + "config.cfg")
 
 func get_config_bool(value : String):

@@ -86,7 +86,7 @@ func read_file(path):
 
 func write_file(content : String, path : String):
 	var file := File.new()
-	print(path)
+#	print(path)
 	var err = file.open(get_absolute_path(path), File.WRITE)
 	if err != OK:
 		print("ERROR: writing failed with error " + ERROR.keys()[err])
@@ -150,7 +150,7 @@ func delete_directory(p_path : String):
 
 func delete_confirmed():
 	os_delete_directory(path_about_to_be_deleted)
-	print(path_about_to_be_deleted + " deleted")
+#	print(path_about_to_be_deleted + " deleted")
 	emit_signal("delete_confirm_answered")
 
 func delete_canceled():

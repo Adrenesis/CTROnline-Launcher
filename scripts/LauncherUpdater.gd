@@ -8,6 +8,7 @@ func main():
 	Utils.controller.updateConfirmationDialog.get_ok().connect("pressed", self, "update_confirmed")
 	Utils.controller.updateConfirmationDialog.get_cancel().connect("pressed", self, "update_canceled")
 	Utils.controller.updateConfirmationDialog.get_close_button().connect("pressed", self, "update_canceled")
+	Utils.controller.proxy_print("Checking for launcher update")
 	Utils.make_directory("./temp/")
 	if not Utils.directory_exists("./temp/"):
 		OS.alert("Can't write " + Utils.get_absolute_path("./temp/"))
@@ -35,17 +36,21 @@ func main():
 					if new_version_table[3] > old_version_table [3]:
 						need_to_update = true
 		if (need_to_update):
+			Utils.controller.proxy_print("Update found.")
 			Utils.controller.updateConfirmationDialog.get_node("Label2").text = (
 				"Th launcher can update from v" + old_version + " to v" + new_version + "\n" +
 				"Do you want to update?")
 			Utils.controller.updateConfirmationDialog.popup()
 			yield(self, "update_confirm_answered")
+		else:
+			print("No update detected.")
+			Utils.controller.proxy_print("No update detected.")
 	
-	print("answered")
+#	print("answered")
 	Utils.controller.updateConfirmationDialog.get_ok().disconnect("pressed", self, "update_confirmed")
 	Utils.controller.updateConfirmationDialog.get_cancel().disconnect("pressed", self, "update_canceled")
 	Utils.controller.updateConfirmationDialog.get_close_button().disconnect("pressed", self, "update_canceled")
-	print(Utils.controller.usernameLineEdit.text)
+#	print(Utils.controller.usernameLineEdit.text)
 	Utils.controller.is_running = false
 	Utils.controller.username_changed(Utils.controller.usernameLineEdit.text)
 	queue_free()

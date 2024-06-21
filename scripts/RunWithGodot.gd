@@ -186,7 +186,7 @@ func update_ctronline():
 	Utils.controller.proxy_print("Downloading done.")
 	Utils.controller.proxy_print("Updating CTR Online...")
 	xdelta_cmd = Utils.get_os_xdelta_command(runNode.fps30CheckBox.pressed)
-	print(xdelta_cmd)
+#	print(xdelta_cmd)
 	yield(get_tree(), "idle_frame")
 	OS.execute("cmd", ["/c", xdelta_cmd])
 #	os_shell_execute(xdelta_cmd)
