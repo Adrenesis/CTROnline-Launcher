@@ -62,6 +62,7 @@ which launches the updater with a custom folder for xdelta, duckstation, a custo
 - Mods nicely answering my questions
 - Carisa_Rhythm_Demon and ReMate15T (ARG) who had the idea of scripting this
 - Sanik [🇦🇷], penta3 for beta testing and ideas
+- Tripal [AUS] for the logo of CTR Online
 - Leormas [ 🇦🇷 ] for graphics and UIs
 - Leno for sharing tricks to get this done [Link toward their launcher](https://github.com/xlenore/OnlineCTR_Launcher)
 - [DuckStation](https://github.com/stenzek/duckstation) team (don't bother them please)
@@ -70,4 +71,6 @@ which launches the updater with a custom folder for xdelta, duckstation, a custo
 
 ## License
 
-Under MIT License
+Under MIT License.
+CRASH, CRASH BANDICOOT and all related characters are trademarks of Activision Publishing, Inc.
+Activision Publishing, Inc. has no association with and takes no responsibility for the content in this application.
