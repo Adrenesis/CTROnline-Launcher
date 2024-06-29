@@ -129,7 +129,7 @@ func make_directory(path : String) -> bool:
 	return (OK == directory.make_dir(get_absolute_path(path)))
 
 func delete_directory(p_path : String):
-	var path = get_absolute_path(p_path)
+	var path = get_absolute_path(p_path, true)
 	var path_check = path.to_lower()
 	if (
 		(path_check.find("xdelta") != -1) or
