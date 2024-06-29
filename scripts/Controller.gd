@@ -43,6 +43,8 @@ var forceUpdateCheckBox = null
 
 var keepRunningButton = null
 var keepRunningCheckBox = null
+var backgroundHSlider = null
+var layoutHSlider = null
 
 var biosLineEdit = null
 var duckStationLineEdit = null
@@ -135,6 +137,9 @@ func _ready():
 	keepRunningButton = get_node("%KeepRunning")
 	keepRunningCheckBox = keepRunningButton.get_node("CheckBox")
 	
+	backgroundHSlider = get_node("%BackgroundHSlider")
+	layoutHSlider = get_node("%LayoutHSlider")
+	
 	xDeltaHTTPRequest = get_node("%HTTPRequestXDelta")
 	duckStationHTTPRequest = get_node("%HTTPRequestDuckStation")
 	gameSettingsHTTPRequest = get_node("%HTTPRequestGameSettings")
@@ -218,6 +223,9 @@ func _ready():
 	
 	run_button_parent = runButton.get_parent()
 	
+	backgroundHSlider.connect("value_changed", self, "set_background_speed")
+	layoutHSlider.connect("value_changed", self, "set_layout_speed")
+	
 	min_size_default_font = theme.default_font.size
 	min_size_run_font = run_button_parent.theme.default_font.size
 	
@@ -260,6 +268,14 @@ func _process(delta):
 	
 
 #	OS.set_window_always_on_top(false)
+
+func set_background_speed(value : float):
+	get_node("BackgroundTextureRect").material.set_shader_param("time_scale", value)
+
+func set_layout_speed(value : float):
+	get_node("LayoutTextureRect1").material.set_shader_param("time_scale", value)
+	get_node("LayoutTextureRect2").material.set_shader_param("time_scale", value)
+	
 
 func on_window_resize():
 	min_size_default_font = default_min_size_default_font

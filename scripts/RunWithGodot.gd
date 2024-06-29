@@ -173,8 +173,8 @@ func update_ctronline():
 	var xdelta_cmd = ""
 	if not runNode.fps30CheckBox.pressed:
 		Downloader.download(runNode.patchURLLineEdit.text 
-		, "ctr-u_Online60.xdelta"
-		, runNode.patchHTTPRequest)
+			, "ctr-u_Online60.xdelta"
+			, runNode.patchHTTPRequest)
 		yield(Downloader, "download_done")
 		
 	else:
